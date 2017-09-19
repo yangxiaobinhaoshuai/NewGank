@@ -1,0 +1,10 @@
+# Created by .ignore support plugin (hsz.mobi)
+.gitignore
+NewGank.iml
+app/app.iml
+app/presentation.iml
+build/
+local.properties
+/.idea/
+/.gradle/
+
