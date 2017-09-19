@@ -1,0 +1,25 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.yangxiaobin.gank.mvp.view.fragment.CollectionFragment"
+    >
+  <android.support.v7.widget.Toolbar
+      android:id="@+id/toolbar_collection_frament"
+      android:layout_width="match_parent"
+      android:layout_height="80dp"
+      android:background="@color/colorPrimaryDark"
+      android:paddingTop="20dp"
+      app:titleTextColor="@color/white"
+      >
+  </android.support.v7.widget.Toolbar>
+
+  <com.yangxiaobin.EasyRecyclerView
+      android:id="@+id/recyclerview_collection_fragment"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      />
+
+</LinearLayout>

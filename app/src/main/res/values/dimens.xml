@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--<dimen name="status_bar_height">25dp</dimen>-->
+  <dimen name="height_image_content_fragment">256dp</dimen>
+</resources>

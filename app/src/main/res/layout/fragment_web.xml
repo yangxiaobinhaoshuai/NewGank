@@ -1,0 +1,31 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clickable="true"
+    android:focusable="true"
+    tools:context="com.yangxiaobin.gank.mvp.view.fragment.WebFragment"
+    >
+
+  <android.support.v7.widget.Toolbar
+      android:id="@+id/toolbar_web_fragment"
+      android:layout_width="match_parent"
+      android:layout_height="80dp"
+      android:layout_alignParentTop="true"
+      android:background="@color/colorPrimary"
+      android:paddingTop="20dp"
+      android:popupTheme="@style/ToolbarPopupTheme"
+      app:titleTextColor="@color/white"
+      >
+  </android.support.v7.widget.Toolbar>
+
+  <ProgressBar
+      android:id="@+id/progressbar"
+      android:layout_width="match_parent"
+      android:layout_height="1dp"
+      android:layout_below="@id/toolbar_web_fragment"
+      android:background="@color/colorAccent"
+      />
+</RelativeLayout>

@@ -1,0 +1,40 @@
+<resources>
+  <string name="app_name">GankMan</string>
+
+  <!-- TODO: Remove or change this placeholder text -->
+  <string name="hello_blank_fragment">Hello blank fragment</string>
+  <!--toast-->
+  <string name="double_click_quit_app">再按一次退出</string>
+  <string name="error_parse_server">解析服务器错误</string>
+
+  <!--shareElement-->
+  <string name="share_element_main_item_to_content">share_element_main_item_to_content</string>
+  <string name="title_main_activity">首页</string>
+
+  <string name="tv_android_category_item_back">Android</string>
+  <string name="tv_ios_category_item_back">iOS</string>
+  <string name="tv_web_category_item_back">Web</string>
+  <string name="tv_meizi_category_item_back">福利</string>
+  <string name="tv_suggest_category_item_back">瞎推荐</string>
+  <string name="tv_video_category_item_back">Video</string>
+  <string name="tv_extend_category_item_back">拓展资源</string>
+  <string name="collection_menu_navigationview_main">收藏</string>
+  <string name="clear_cache_menu_navigationview_main">清理缓存</string>
+  <string name="app_category_menu_navigationview_main">App</string>
+  <string name="open">打开侧拉菜单</string>
+  <string name="close">关闭侧拉菜单</string>
+  <string name="account_or_pwd_illegal">账号或者密码不合法</string>
+  <string name="no_video_today">今天没有视频哟</string>
+  <string name="get_github_avatar_and_name">用于获取github主页头像、姓名和创建本地账户</string>
+  <string name="change_account_or_not">退出登录？</string>
+  <string name="please_login_frist">请先登录</string>
+  <string name="clear_cache">清理缓存</string>
+  <string name="clear_cache_ing">缓存清理中…</string>
+  <string name="net_is_not_available">网络不可用</string>
+  <string name="app_version_code">V1.0.0</string>
+  <string name="there_is_no_more_data">没有数据了</string>
+  <string name="load_net_resourece_failed_please_try_again">加载网络资源失败，点击重试</string>
+  <string name="about_author">关于作者</string>
+  <string name="name_author">杨晓彬</string>
+  <string name="github_home_page">github主页</string>
+</resources>

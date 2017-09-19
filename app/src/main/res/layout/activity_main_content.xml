@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearlayout_main_activity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="com.yangxiaobin.gank.mvp.view.activity.MainActivity"
+    >
+  <!--top bar-->
+  <android.support.v7.widget.Toolbar
+      android:id="@+id/toolbar_main_activity"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentTop="true"
+      android:minHeight="?android:actionBarSize"
+      app:popupTheme="@style/ToolbarPopupTheme"
+      app:titleTextColor="@color/white"
+      >
+  </android.support.v7.widget.Toolbar>
+
+  <!--cardGallery-->
+  <com.yangxiaobin.gank.mvp.view.widget.cardgallery.SpeedRecyclerView
+      android:id="@+id/speedrecyclerview_main_activity"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_below="@+id/toolbar_main_activity"
+      />
+
+  <!--load error-->
+  <ViewStub
+      android:id="@+id/viewstub_load_error_main_activity"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:inflatedId="@+id/inflate_id_load_error"
+      android:layout="@layout/layout_load_error"
+      />
+</RelativeLayout>

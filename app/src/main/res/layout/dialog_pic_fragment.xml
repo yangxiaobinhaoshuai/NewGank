@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingBottom="40dp"
+    android:paddingEnd="20dp"
+    android:paddingStart="20dp"
+    android:paddingTop="40dp"
+    >
+
+  <com.github.chrisbanes.photoview.PhotoView
+      android:id="@+id/imgv_content_pic_dialog_framgent"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="20dp"
+      android:layout_marginTop="30dp"
+      tools:src="@mipmap/ic_launcher"
+      />
+
+  <ImageView
+      android:id="@+id/imgv_close_pic_dialog_fragment"
+      android:layout_width="20dp"
+      android:layout_height="20dp"
+      android:layout_gravity="end"
+      android:src="@drawable/ic_close_white_128"
+      />
+</FrameLayout>

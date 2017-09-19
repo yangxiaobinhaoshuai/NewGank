@@ -1,0 +1,66 @@
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="com.yangxiaobin.gank.mvp.view.fragment.ContentFragment"
+    >
+  <android.support.design.widget.AppBarLayout
+      android:id="@+id/appbar_layout_content_fragment"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/height_image_content_fragment"
+      android:fitsSystemWindows="true"
+      android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+      >
+    <android.support.design.widget.CollapsingToolbarLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        app:expandedTitleMarginEnd="64dp"
+        app:expandedTitleMarginStart="48dp"
+        app:layout_scrollFlags="scroll|exitUntilCollapsed"
+        >
+      <ImageView
+          android:id="@+id/imgv_collapse_conentent_fragment"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:fitsSystemWindows="true"
+          android:scaleType="centerCrop"
+          android:transitionName="@string/share_element_main_item_to_content"
+          app:layout_collapseMode="parallax"
+          />
+      <!--谜一样的问题解决了两天终于试出来了 =。= navigationicon 和 title齐平 -->
+      <android.support.v7.widget.Toolbar
+          android:id="@+id/toolbar_content_fragment"
+          android:layout_width="match_parent"
+          android:layout_height="80dp"
+          android:fitsSystemWindows="true"
+          android:paddingTop="20dp"
+          app:buttonGravity="bottom"
+          app:layout_collapseMode="pin"
+          app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+          />
+    </android.support.design.widget.CollapsingToolbarLayout>
+  </android.support.design.widget.AppBarLayout>
+
+  <com.yangxiaobin.EasyRecyclerView
+      android:id="@+id/auto_recyclerview_content_fragment"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      app:layout_behavior="@string/appbar_scrolling_view_behavior"
+      >
+  </com.yangxiaobin.EasyRecyclerView>
+
+  <android.support.design.widget.FloatingActionButton
+      android:id="@+id/fab_content_fragment"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginEnd="24dp"
+      android:src="@drawable/ic_video_128"
+      app:fabSize="auto"
+      app:layout_anchor="@id/appbar_layout_content_fragment"
+      app:layout_anchorGravity="right|bottom"
+      />
+</android.support.design.widget.CoordinatorLayout>

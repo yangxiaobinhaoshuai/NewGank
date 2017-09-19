@@ -1,0 +1,17 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true"
+    tools:context="com.yangxiaobin.gank.mvp.view.fragment.MeiziFragment"
+    >
+  <com.github.chrisbanes.photoview.PhotoView
+      android:id="@+id/photoview_meizi_fragment"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@color/Black"
+      android:scaleType="centerCrop"
+      android:transitionName="@string/share_element_main_item_to_content"
+      />
+</FrameLayout>

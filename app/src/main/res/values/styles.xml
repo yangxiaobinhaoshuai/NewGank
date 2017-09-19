@@ -1,0 +1,39 @@
+<resources>
+
+  <!-- Base application theme. -->
+  <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <!-- Customize your theme here. -->
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="colorAccent">@color/colorAccent</item>
+
+    <!--去标题栏-->
+    <item name="windowActionBar">false</item>
+    <item name="android:windowNoTitle">true</item>
+    <!--改变toolbar菜单三个点为白色-->
+    <item name="android:textColorSecondary">@color/white</item>
+    <!--开启ShareElement-->
+    <!--https://github.com/lgvalle/Material-Animations/-->
+    <item name="android:windowContentTransitions">true</item>
+  </style>
+
+  <!--xml -->
+  <style name="tv_category_item_back_main_recyclerview">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:textSize">16sp</item>
+    <item name="android:layout_marginLeft">120dp</item>
+    <item name="android:drawablePadding">10dp</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:gravity">start|center_vertical</item>
+  </style>
+
+  <!--toolbar popup style-->
+  <style name="ToolbarPopupTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+    <!--<item name="android:colorBackground">#000000</item>-->
+    <item name="actionOverflowMenuStyle">@style/OverflowMenuStyle</item> <!--新增一个item，用于控制menu-->
+  </style>
+
+  <style name="OverflowMenuStyle" parent="Widget.AppCompat.Light.PopupMenu.Overflow">
+    <item name="overlapAnchor">false</item>  <!--把该属性改为false即可使menu位置位于toolbar之下-->
+  </style>
+</resources>

@@ -1,0 +1,32 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    tools:context="com.yangxiaobin.gank.mvp.view.fragment.SearchFragment"
+    >
+  <android.support.v7.widget.Toolbar
+      android:id="@+id/toolbar_search_framgent"
+      android:layout_width="match_parent"
+      android:layout_height="80dp"
+      android:background="@color/colorPrimary"
+      android:elevation="10dp"
+      android:focusable="true"
+      android:focusableInTouchMode="true"
+      android:paddingTop="20dp"
+      app:titleTextColor="@color/white"
+      >
+  </android.support.v7.widget.Toolbar>
+
+  <com.yangxiaobin.EasyRecyclerView
+      android:id="@+id/recyclerview_search_fragment"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      >
+  </com.yangxiaobin.EasyRecyclerView>
+
+</LinearLayout>

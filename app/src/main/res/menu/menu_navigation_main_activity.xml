@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <group android:id="@+id/group_menu_cagegory">
+    <item
+        android:id="@+id/Android_category_menu_navigationview_main"
+        android:icon="@drawable/ic_android_128"
+        android:title="@string/tv_android_category_item_back"/>
+    <item
+        android:id="@+id/iOS_category_menu_navigationview_main"
+        android:icon="@drawable/ic_ios_128"
+        android:title="@string/tv_ios_category_item_back"/>
+    <item
+        android:id="@+id/Web_category_menu_navigationview_main"
+        android:icon="@drawable/ic_web_128"
+        android:title="@string/tv_web_category_item_back"/>
+    <item
+        android:id="@+id/suggest_category_menu_navigationview_main"
+        android:icon="@drawable/ic_recommend_128"
+        android:title="@string/tv_suggest_category_item_back"/>
+    <item
+        android:id="@+id/video_category_menu_navigationview_main"
+        android:icon="@drawable/ic_video_128"
+        android:title="@string/tv_video_category_item_back"/>
+    <item
+        android:id="@+id/meizi_category_menu_navigationview_main"
+        android:icon="@drawable/ic_the_heart_stealer_128"
+        android:title="@string/tv_meizi_category_item_back"/>
+    <item
+        android:id="@+id/extend_category_menu_navigationview_main"
+        android:icon="@drawable/ic_extend_128"
+        android:title="@string/tv_extend_category_item_back"/>
+    <item
+        android:id="@+id/app_category_menu_navigationview_main"
+        android:icon="@drawable/ic_app_128"
+        android:title="@string/app_category_menu_navigationview_main"/>
+  </group>
+  <group android:id="@+id/group_menu_setting">
+    <item
+        android:id="@+id/collection_category_menu_navigationview_main"
+        android:icon="@drawable/ic_collcetion_128"
+        android:title="@string/collection_menu_navigationview_main"/>
+    <item
+        android:id="@+id/clear_cache_category_menu_navigationview_main"
+        android:icon="@drawable/ic_clear_cache_128"
+        android:title="@string/clear_cache_menu_navigationview_main"/>
+  </group>
+</menu>
