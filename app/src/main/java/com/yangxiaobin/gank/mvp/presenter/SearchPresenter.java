@@ -1,9 +1,7 @@
 package com.yangxiaobin.gank.mvp.presenter;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -14,34 +12,31 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.SearchView;
 import android.transition.Slide;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.PopupWindow;
-import com.handsome.library.T;
 import com.yangxiaobin.Constant;
 import com.yangxiaobin.EasyRecyclerView;
+import com.yangxiaobin.adapter.AdapterWrapper;
 import com.yangxiaobin.gank.App;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.base.BasePresenter;
 import com.yangxiaobin.gank.common.bean.CategoryEntity;
-import com.yangxiaobin.gank.common.bean.ContentItemEntity;
 import com.yangxiaobin.gank.common.bean.SearchHistoryEntity;
 import com.yangxiaobin.gank.common.net.ErrorConsumer;
 import com.yangxiaobin.gank.common.utils.CommonUtils;
-import com.yangxiaobin.gank.common.utils.UserUtils;
 import com.yangxiaobin.gank.mvp.contract.SearchContract;
 import com.yangxiaobin.gank.mvp.view.adapter.CategoryAdapter;
 import com.yangxiaobin.gank.mvp.view.adapter.SearchHistoryAdapter;
 import com.yangxiaobin.gank.mvp.view.fragment.WebFragment;
 import com.yangxiaobin.kits.base.FragmentSkiper;
 import com.yangxiaobin.listener.OnItemClickListener;
-import com.yangxiaobin.listener.OnItemLongClickListener;
 import com.yangxiaobin.refresh.SwipeTopBottomLayout;
 import io.reactivex.functions.Consumer;
-import io.realm.RealmResults;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -52,12 +47,10 @@ import javax.inject.Inject;
 public class SearchPresenter extends BasePresenter
     implements SearchContract.Presenter, View.OnClickListener, SearchView.OnQueryTextListener,
     SwipeTopBottomLayout.OnRefreshListener, SwipeTopBottomLayout.OnLoadMoreListener,
-    OnItemLongClickListener, DialogInterface.OnClickListener, OnItemClickListener {
+    OnItemClickListener {
 
   private SearchContract.View mView;
   private SearchContract.Model mModel;
-  private int mLongClickedPos;
-  private AlertDialog.Builder mBuilder;                       // 长按收藏
   private List<CategoryEntity.ResultsBean> mTotalResults;
   private CategoryAdapter mAdapter;
   private String mQuery;
@@ -67,7 +60,9 @@ public class SearchPresenter extends BasePresenter
   private InputMethodManager mInputMethodManager;
   private PopupWindow mPopupWindow;
   private float mScreenWidth;
-  private EasyRecyclerView mRecyclerView;
+  // 搜索历史
+  private List<SearchHistoryEntity> mHistoryEntities;
+  private AdapterWrapper mAdapterWrapper;
 
   @Inject public SearchPresenter(SearchContract.View view, SearchContract.Model model) {
     mView = view;
@@ -75,14 +70,13 @@ public class SearchPresenter extends BasePresenter
   }
 
   @RequiresApi(api = Build.VERSION_CODES.M) @Override public void start() {
-    mBuilder = new AlertDialog.Builder(mView.getViewContext());
     // 隐藏或者显示软键盘
     mInputMethodManager =
         (InputMethodManager) mView.getViewContext().getSystemService(Context.INPUT_METHOD_SERVICE);
     // 延迟100ms 后执行
-    mView.getViewForInputMananger().postDelayed(new Runnable() {
+    mView.getViewForInputManager().postDelayed(new Runnable() {
       @Override public void run() {
-        mInputMethodManager.showSoftInput(mView.getViewForInputMananger(), 0);
+        mInputMethodManager.showSoftInput(mView.getViewForInputManager(), 0);
       }
     }, 100);
     initPopupWindow();
@@ -105,59 +99,72 @@ public class SearchPresenter extends BasePresenter
     // 软键盘是必须的
     mPopupWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NEEDED);
     // 当布局变化时重新计算大小
-    //mPopupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-    // 软键盘盖住popupwindow
+    // mPopupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+    // 软键盘盖住popUpWindow
     mPopupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+    // recyclerView setContentView
     mPopupWindow.setContentView(getHistoryRecyclerView());
-    mView.getViewForInputMananger().postDelayed(new Runnable() {
+    // show PopUpWindow
+    mView.getViewForInputManager().postDelayed(new Runnable() {
       @Override public void run() {
-        mPopupWindow.showAsDropDown(mView.getSuggestWindwoAchor(), ((int) (mScreenWidth / 10 / 2)),
-            0);
+        if (mHistoryEntities.size() != 0) {
+          mPopupWindow.showAsDropDown(mView.getSuggestWindowAnchor(),
+              ((int) (mScreenWidth / 10 / 2)), 0);
+        }
       }
     }, 100);
   }
 
-  @NonNull private EasyRecyclerView getHistoryRecyclerView() {
-    mRecyclerView = new EasyRecyclerView(mView.getViewContext());
-    mRecyclerView.setLayoutManager(new LinearLayoutManager(mView.getViewContext()));
-    mRecyclerView.addItemDecoration(
-        new DividerItemDecoration(mView.getViewContext(), DividerItemDecoration.VERTICAL));
-    mRecyclerView.setOnItemClickListener(this, R.id.layout_item_search_history,
-        R.id.imgv_delete_item_search_history);
+  private EasyRecyclerView getHistoryRecyclerView() {
+    EasyRecyclerView recyclerView = getPopUpWindowRecyclerView();
     // 从db中获取history
-    RealmResults<SearchHistoryEntity> historyEntities =
-        mView.getRealmHelper().getAllSearchHistory();
-    if (historyEntities.size() == 0) {
-      return null;
-    }
-    SearchHistoryAdapter adapter =
-        new SearchHistoryAdapter(historyEntities, R.layout.item_search_history_search_fragment);
-    mRecyclerView.setAdapter(adapter);
-    return mRecyclerView;
+    mHistoryEntities = mView.getRealmHelper().getAllSearchHistory();
+    // history adapter
+    SearchHistoryAdapter searchHistoryAdapter =
+        new SearchHistoryAdapter(mHistoryEntities, R.layout.item_search_history_search_fragment);
+    mAdapterWrapper = new AdapterWrapper(searchHistoryAdapter);
+    // 添加footer 和 header
+    initPopUpWindowHeaderAndFooter();
+    recyclerView.setAdapter(mAdapterWrapper);
+    return recyclerView;
   }
 
-  @Override public void onClick(View v) {
-    switch (v.getId()) {
-      case android.support.v7.appcompat.R.id.search_src_text:
-        if (!mPopupWindow.isShowing()) {
-          mPopupWindow.showAsDropDown(mView.getSuggestWindwoAchor(),
-              ((int) (mScreenWidth / 10 / 2)), 0);
-        }
-        break;
-      default:
-        // navigator
-        mView.removeSelf();
-        break;
-    }
+  @NonNull private EasyRecyclerView getPopUpWindowRecyclerView() {
+    EasyRecyclerView recyclerView = new EasyRecyclerView(mView.getViewContext());
+    recyclerView.setLayoutManager(new LinearLayoutManager(mView.getViewContext()));
+    recyclerView.addItemDecoration(
+        new DividerItemDecoration(mView.getViewContext(), DividerItemDecoration.VERTICAL));
+    recyclerView.setOnItemClickListener(this, R.id.layout_item_search_history,
+        R.id.imgv_delete_item_search_history);
+    return recyclerView;
   }
 
+  private void initPopUpWindowHeaderAndFooter() {
+    // add header
+    LayoutInflater layoutInflater = LayoutInflater.from(mView.getViewContext());
+    View popUpWindowHeader =
+        layoutInflater.inflate(R.layout.header_search_history, mView.getHeaderAndFooterParent(),
+            false);
+    // close popUpWindow
+    popUpWindowHeader.findViewById(R.id.imgv_close_search_history_list).setOnClickListener(this);
+    View popUpWindowFooter =
+        layoutInflater.inflate(R.layout.footer_search_history, mView.getHeaderAndFooterParent(),
+            false);
+    // delete all history
+    popUpWindowFooter.findViewById(R.id.imgv_delete_all_search_history_list)
+        .setOnClickListener(this);
+    mAdapterWrapper.addHeaders(popUpWindowHeader);
+    mAdapterWrapper.addFooters(popUpWindowFooter);
+  }
+
+  // 向db插入搜索历史
   @Override public boolean onQueryTextSubmit(String query) {
     mQuery = query;
-    dismissPopupwindow();
+    dismissPopUpWindow();
     //Logger.e("提交的搜索内容：" + query);
     doNetGetSearchRes(query);
     // save to db
-    //mView.getRealmHelper().insertSearchHistory(query, System.currentTimeMillis());
+    mView.getRealmHelper().insertSearchHistory(query, System.currentTimeMillis());
     return false;
   }
 
@@ -215,76 +222,77 @@ public class SearchPresenter extends BasePresenter
     doNetGetSearchRes(mQuery);
   }
 
-  @Override public void onItemLongClick(View view, int pos, MotionEvent motionEvent) {
-    // save to db
-    mLongClickedPos = pos;
-    if (!hasInsertedBefore(mTotalResults.get(pos))) {
-      mBuilder.setItems(new String[] { "添加收藏", }, this);
-    } else {
-      mBuilder.setItems(new String[] { "删除收藏" }, this);
-    }
-    mBuilder.create().show();
-  }
-
-  // 查询是否添加过
-  private boolean hasInsertedBefore(ContentItemEntity entity) {
-    return mView.getRealmHelper().findOne(entity) != null;
-  }
-
-  @Override public void onClick(DialogInterface dialog, int which) {
-    if (!UserUtils.hasLogined(mView.getViewContext())) {
-      T.info(mView.getViewContext().getString(R.string.please_login_frist));
-    } else {
-      ContentItemEntity entity = mTotalResults.get(mLongClickedPos);
-      if (hasInsertedBefore(entity)) {
-        mView.getRealmHelper().delete(entity);
-      } else {
-        mView.getRealmHelper().insert(entity);
-      }
-      mAdapter.notifyItemChanged(mLongClickedPos);
-    }
-  }
-
   @Override public void onDestroy() {
     // 强制隐藏软键盘
     mInputMethodManager.hideSoftInputFromWindow(
         ((Activity) mView.getViewContext()).getWindow().getDecorView().getWindowToken(), 0);
-    dismissPopupwindow();
+    dismissPopUpWindow();
     mView.getRealmHelper().closeRealm();
   }
 
-  @Override public void onItemClick(View view, int pos, MotionEvent motionEvent) {
-    String url = mTotalResults.get(pos).getUrl();
-    FragmentSkiper.getInstance()
-        .init(((FragmentActivity) mView.getViewContext()))
-        .target(new WebFragment().setUrl(url))
-        .add(android.R.id.content);
-    App.getINSTANCE().getItemUrls().add(url);
-    mAdapter.notifyItemChanged(pos);
+  @Override public void onClick(View v) {
+    switch (v.getId()) {
+      // edt 收到点击就会弹窗
+      case android.support.v7.appcompat.R.id.search_src_text:
+        if (!mPopupWindow.isShowing()) {
+          mAdapterWrapper.notifyDataSetChanged();
+          if (mHistoryEntities.size() != 0) {
+            if (mHistoryEntities.size() > 10) {
+              mHistoryEntities = mHistoryEntities.subList(0, 10);
+            }
+            mPopupWindow.showAsDropDown(mView.getSuggestWindowAnchor(),
+                ((int) (mScreenWidth / 10 / 2)), 0);
+          }
+        }
+        break;
+      case R.id.imgv_close_search_history_list:
+        // 关闭pupUpWindow
+        dismissPopUpWindow();
+        break;
+      case R.id.imgv_delete_all_search_history_list:
+        // 删除所有历史记录
+        mView.getRealmHelper().deleteAllHistory();
+        dismissPopUpWindow();
+        break;
+      default:
+        // navigator
+        mView.removeSelf();
+        break;
+    }
   }
 
-  // 搜索历史item click 监听
-  //@Override public void onSectionClick(View view, int pos, MotionEvent motionEvent) {
-  //  Logger.e("onSectinClick");
-  //  TextView content = (TextView) view.findViewById(R.id.tv_search_key_word_item_serarch_history);
-  //  String historyText = content.getText().toString().trim();
-  //  switch (view.getId()) {
-  //    case R.id.layout_item_search_history:
-  //      // setText as query
-  //      mView.setHistoryQeryAndSubmit(historyText);
-  //      dismissPopupwindow();
-  //      break;
-  //    case R.id.imgv_delete_item_search_history:
-  //      // 删除历史记录
-  //      mView.getRealmHelper().deleteSomeHistory(historyText);
-  //      dismissPopupwindow();
-  //      break;
-  //    default:
-  //      break;
-  //  }
-  //}
+  // 搜索历史列表的监听   注意recyclerView如果带了header的话是会影响position的
+  @Override public void onItemClick(View view, int pos, MotionEvent motionEvent) {
+    switch (view.getId()) {
+      case R.id.layout_item_search_history:
+        mView.setHistoryQueryAndSubmit(mHistoryEntities.get(pos - 1).getContent());
+        dismissPopUpWindow();
+        break;
+      case R.id.imgv_delete_item_search_history:
+        // 集合删除  db 删除 , realm 实时映射，不需要集合删除
+        //Logger.e("历史记录：" + mHistoryEntities.size() + "    pos:" + pos);
+        mView.getRealmHelper().deleteSomeHistory(mHistoryEntities.get(pos - 1).getContent());
+        if (mView.getRealmHelper().getAllSearchHistory().size() == 0) {
+          dismissPopUpWindow();
+          return;
+        }
+        mAdapterWrapper.notifyItemRemoved(pos);
+        break;
+      case R.id.layout_item_content_fragment:
+        String url = mTotalResults.get(pos).getUrl();
+        FragmentSkiper.getInstance()
+            .init(((FragmentActivity) mView.getViewContext()))
+            .target(new WebFragment().setUrl(url))
+            .add(android.R.id.content);
+        App.getINSTANCE().getItemUrls().add(url);
+        mAdapter.notifyItemChanged(pos);
+        break;
+      default:
+        break;
+    }
+  }
 
-  private void dismissPopupwindow() {
+  private void dismissPopUpWindow() {
     if (mPopupWindow != null && mPopupWindow.isShowing()) {
       mPopupWindow.dismiss();
     }
