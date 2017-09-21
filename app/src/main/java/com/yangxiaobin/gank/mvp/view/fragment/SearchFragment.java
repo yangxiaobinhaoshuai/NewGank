@@ -49,7 +49,6 @@ public class SearchFragment extends BaseFragment implements SearchContract.View 
     mRecyclerView.addItemDecoration(
         new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL));
     mRecyclerView.setNeedRefresh(true);
-    mRecyclerView.setOnItemLongClickListener(mPresenter);
     mRecyclerView.setAntiShake(1000);
     mRecyclerView.setOnItemClickListener(mPresenter);
     mSwipeTopBottomLayout = mRecyclerView.getSwipeTopBottomLayout();
@@ -63,9 +62,9 @@ public class SearchFragment extends BaseFragment implements SearchContract.View 
     mToolbar.inflateMenu(R.menu.menu_toolbar_search_fragment);
     mToolbar.setTitle("搜索");
     mSearchView = (SearchView) mToolbar.findViewById(R.id.search_view_menu_item_search_fragment);
-    // if false searchview always visible, bug looks ugly
+    // if false searchView always visible, bug looks ugly
     mSearchView.setIconifiedByDefault(false);
-    // 修改search view textcolor 为白色
+    // 修改search view textColor 为白色
     mSearchTextView = (SearchView.SearchAutoComplete) mSearchView.findViewById(
         android.support.v7.appcompat.R.id.search_src_text);
     mSearchView.setSubmitButtonEnabled(true);
@@ -105,16 +104,20 @@ public class SearchFragment extends BaseFragment implements SearchContract.View 
     mRecyclerView.smoothScrollToPosition(pos);
   }
 
-  @Override public SearchView.SearchAutoComplete getViewForInputMananger() {
+  @Override public SearchView.SearchAutoComplete getViewForInputManager() {
     return mSearchTextView;
   }
 
-  @Override public Toolbar getSuggestWindwoAchor() {
+  @Override public Toolbar getSuggestWindowAnchor() {
     return mToolbar;
   }
 
-  @Override public void setHistoryQeryAndSubmit(String content) {
-    mSearchView.setQuery(content,true);
+  @Override public void setHistoryQueryAndSubmit(String content) {
+    mSearchView.setQuery(content, true);
+  }
+
+  @Override public EasyRecyclerView getHeaderAndFooterParent() {
+    return mRecyclerView;
   }
 
   @Override public void onDestroy() {

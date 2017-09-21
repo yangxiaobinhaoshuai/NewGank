@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.handsome.library.T;
+import com.yangxiaobin.adapter.AdapterWrapper;
 import com.yangxiaobin.adapter.SlideItemTypeDelegate;
 import com.yangxiaobin.gank.App;
 import com.yangxiaobin.gank.R;
@@ -25,10 +26,15 @@ import java.util.List;
 public class ItemTypeContentCategoryContent implements SlideItemTypeDelegate<ContentItemEntity> {
 
   private RealmHelper mRealmHelper;
+  private AdapterWrapper mAdapterWrapper;
   private ContentAdapter mAdapter;
 
   public ItemTypeContentCategoryContent(ContentAdapter adapter) {
     mAdapter = adapter;
+  }
+
+  public ItemTypeContentCategoryContent(AdapterWrapper adapterWrapper) {
+    mAdapterWrapper = adapterWrapper;
   }
 
   @Override public int getItemViewLayoutId() {
@@ -42,7 +48,9 @@ public class ItemTypeContentCategoryContent implements SlideItemTypeDelegate<Con
   @Override
   public void bindData(Context context, EasyViewHolder holder, ContentItemEntity entity, int pos) {
     // collected or not ... must login
-    mRealmHelper = new RealmHelper(context);
+    if (mRealmHelper == null) {
+      mRealmHelper = new RealmHelper(context);
+    }
     checkForCollected(context, holder, entity);
     recordReadItems(context, holder, entity);
     initImages(context, holder, entity);
@@ -54,7 +62,7 @@ public class ItemTypeContentCategoryContent implements SlideItemTypeDelegate<Con
   }
 
   @Override
-  public void onSlide(View view, EasyViewHolder holder, ContentItemEntity entity, int pos) {
+  public void onSlide(View view, EasyViewHolder holder, ContentItemEntity entity, final int pos) {
     Context context = view.getContext();
     if (!UserUtils.hasLogined(context)) {
       T.info(context.getString(R.string.please_login_frist));
@@ -66,11 +74,19 @@ public class ItemTypeContentCategoryContent implements SlideItemTypeDelegate<Con
           break;
         case R.id.tv_remove_collection_menu_slide:
           mRealmHelper.delete(entity);
-          String fLag = mAdapter.getFLag();
-          if (!TextUtils.isEmpty(fLag) && fLag.equals(FlagForContentAdapter.COLLECTION)) {
-            mAdapter.getDataList().remove(entity);
-            mAdapter.notifyItemRemoved(pos);
-            return;
+          if (mAdapterWrapper != null) {
+            // 如果是收藏界面要删除item的
+            ContentAdapter innerAdapter = (ContentAdapter) mAdapterWrapper.getInnerAdapter();
+            String fLag = innerAdapter.getFLag();
+            if (!TextUtils.isEmpty(fLag) && fLag.equals(FlagForContentAdapter.COLLECTION)) {
+              // 收藏列表数据
+              List<ContentItemEntity> dataList = innerAdapter.getDataList();
+              dataList.remove(entity);
+              // FIXME: 2017/9/21  pos是不会变的
+              //mAdapterWrapper.notifyItemRemoved(pos);
+              mAdapterWrapper.notifyDataSetChanged();
+              return;
+            }
           }
           break;
         default:

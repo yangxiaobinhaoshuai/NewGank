@@ -1,7 +1,9 @@
 ### [GankIO](http://gank.io/) Android 客户端 感谢daimajia 提供Api支持！
 
 ### App
-MVP+Dagger2.android+Retrofit+RxJava2+Glide+Realm
+MVP+Dagger2.android+Retrofit+RxJava2+Glide+Realm。
+单Activity+多Fragment 架构,fragment back 处理。
+
 
 ### ScreenShot
 
@@ -13,6 +15,9 @@ MVP+Dagger2.android+Retrofit+RxJava2+Glide+Realm
 4. 搜索功能，搜索历史支持。
 5. 高清妹子长按下载
 6. 干货分享（原生）
+7. 无网络缓存（okHttpClient）
+8. 缓存清理
+
 
 
 ### 开源库

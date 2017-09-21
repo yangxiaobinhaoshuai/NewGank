@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    >
+  <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:layout_gravity="start|center_vertical"
+      android:layout_margin="10dp"
+      android:gravity="center_vertical"
+      android:text="清空所有历史记录"
+      />
+
+  <ImageView
+      android:id="@+id/imgv_delete_all_search_history_list"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="end|center_vertical"
+      android:layout_marginBottom="10dp"
+      android:layout_marginEnd="20dp"
+      android:layout_marginTop="10dp"
+      android:src="@drawable/ic_garbage_black_64"
+      />
+</FrameLayout>

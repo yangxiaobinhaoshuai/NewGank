@@ -1,20 +1,15 @@
 package com.yangxiaobin.gank.mvp.presenter;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
-import com.handsome.library.T;
 import com.yangxiaobin.gank.App;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.base.BasePresenter;
 import com.yangxiaobin.gank.common.bean.CategoryEntity;
-import com.yangxiaobin.gank.common.bean.ContentItemEntity;
 import com.yangxiaobin.gank.common.net.ErrorConsumer;
-import com.yangxiaobin.gank.common.utils.UserUtils;
 import com.yangxiaobin.gank.mvp.contract.CategoryContract;
 import com.yangxiaobin.gank.mvp.view.adapter.CategoryAdapter;
 import com.yangxiaobin.gank.mvp.view.fragment.PicDialogFragment;
@@ -22,7 +17,6 @@ import com.yangxiaobin.gank.mvp.view.fragment.WebFragment;
 import com.yangxiaobin.kits.base.CommonKey;
 import com.yangxiaobin.kits.base.FragmentSkiper;
 import com.yangxiaobin.listener.OnItemClickListener;
-import com.yangxiaobin.listener.OnItemLongClickListener;
 import com.yangxiaobin.refresh.SwipeTopBottomLayout;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -35,8 +29,7 @@ import javax.inject.Inject;
 
 public class CategoryPresenter extends BasePresenter
     implements CategoryContract.Presenter, SwipeTopBottomLayout.OnLoadMoreListener,
-    OnItemClickListener, SwipeTopBottomLayout.OnRefreshListener, View.OnClickListener,
-    OnItemLongClickListener, DialogInterface.OnClickListener {
+    OnItemClickListener, SwipeTopBottomLayout.OnRefreshListener, View.OnClickListener {
 
   private CategoryContract.View mView;
   private CategoryContract.Model mModel;
@@ -46,8 +39,6 @@ public class CategoryPresenter extends BasePresenter
   private CategoryAdapter mAdapter;
   private int mCurrentPage = 1;
   private PicDialogFragment mPicDialogFragment;
-  private int mLongClickedPos;
-  private AlertDialog.Builder mBuilder;
 
   @Inject public CategoryPresenter(CategoryContract.View view, CategoryContract.Model model) {
     mView = view;
@@ -69,7 +60,6 @@ public class CategoryPresenter extends BasePresenter
       }
     }
     mPicDialogFragment = new PicDialogFragment();
-    mBuilder = new AlertDialog.Builder(mView.getViewContext());
   }
 
   private void getListData() {
@@ -137,37 +127,6 @@ public class CategoryPresenter extends BasePresenter
   private void showPicDialog() {
     mPicDialogFragment.show(((FragmentActivity) mView.getViewContext()).getSupportFragmentManager(),
         mPicDialogFragment.getClass().getSimpleName());
-  }
-
-  // 长按添加收藏
-  @Override public void onItemLongClick(View view, int pos, MotionEvent event) {
-    if (!hasInsertedBefore(mResultsBeans.get(pos))) {
-      mBuilder.setItems(new String[] { "添加收藏", }, this);
-    } else {
-      mBuilder.setItems(new String[] { "删除收藏" }, this);
-    }
-    mBuilder.create().show();
-    mLongClickedPos = pos;
-  }
-
-  @Override public void onClick(DialogInterface dialog, int which) {
-    if (!UserUtils.hasLogined(mView.getViewContext())) {
-      T.info(mView.getViewContext().getString(R.string.please_login_frist));
-    } else {
-      ContentItemEntity entity = mResultsBeans.get(mLongClickedPos);
-      if (hasInsertedBefore(entity)) {
-        mView.getRealmHelper().delete(entity);
-      } else {
-        mView.getRealmHelper().insert(entity);
-      }
-      // refresh ui
-      mAdapter.notifyItemChanged(mLongClickedPos);
-    }
-  }
-
-  // 查询是否添加过
-  private boolean hasInsertedBefore(ContentItemEntity entity) {
-    return mView.getRealmHelper().findOne(entity) != null;
   }
 
   @Override public void onRefresh() {

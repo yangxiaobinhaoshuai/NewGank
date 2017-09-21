@@ -2,6 +2,7 @@ package com.yangxiaobin.gank.mvp.contract;
 
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import com.yangxiaobin.EasyRecyclerView;
 import com.yangxiaobin.gank.common.base.IBaseModel;
 import com.yangxiaobin.gank.common.base.IBaseView;
 import com.yangxiaobin.gank.common.bean.CategoryEntity;
@@ -32,11 +33,13 @@ public interface SearchContract {
 
     void recyclerViewMoveToPos(int pos);
 
-    SearchView.SearchAutoComplete getViewForInputMananger();
+    SearchView.SearchAutoComplete getViewForInputManager();
 
-    Toolbar getSuggestWindwoAchor();
+    Toolbar getSuggestWindowAnchor();
 
-    void setHistoryQeryAndSubmit(String content);
+    void setHistoryQueryAndSubmit(String content);
+
+    EasyRecyclerView getHeaderAndFooterParent();
   }
 
   interface Presenter {

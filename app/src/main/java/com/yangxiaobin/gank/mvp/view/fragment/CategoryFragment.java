@@ -49,7 +49,6 @@ public class CategoryFragment extends BaseFragment implements CategoryContract.V
     mSwipeTopBottomLayout.setOnRefreshListener(mPresenter);
     mRecyclerView.setOnItemClickListener(mPresenter, R.id.layout_item_content_fragment,
         R.id.imgv1_item_content_content_fragment, R.id.imgv2_item_content_content_fragment);
-    mRecyclerView.setOnItemLongClickListener(mPresenter);
   }
 
   @Override public Context getViewContext() {

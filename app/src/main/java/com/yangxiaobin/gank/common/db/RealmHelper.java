@@ -3,6 +3,7 @@ package com.yangxiaobin.gank.common.db;
 import android.content.Context;
 import android.text.TextUtils;
 import com.handsome.library.T;
+import com.orhanobut.logger.Logger;
 import com.yangxiaobin.Constant;
 import com.yangxiaobin.gank.common.bean.CollectionEntity;
 import com.yangxiaobin.gank.common.bean.ContentItemEntity;
@@ -11,11 +12,13 @@ import com.yangxiaobin.gank.common.bean.RealmString;
 import com.yangxiaobin.gank.common.bean.SearchHistoryEntity;
 import com.yangxiaobin.gank.common.utils.SPUtils;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmList;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import javax.inject.Inject;
 
 /**
@@ -25,13 +28,13 @@ import javax.inject.Inject;
 public class RealmHelper {
 
   private Realm mRealm;
-  private String mUserid;
+  private String mUserId;
 
   @Inject public RealmHelper(Context context) {
-    mUserid = ((String) SPUtils.get(context, Constant.KEY_USER_ID_LOGIN, ""));
+    mUserId = ((String) SPUtils.get(context, Constant.KEY_USER_ID_LOGIN, ""));
   }
 
-  private Realm getRealm() {
+  public Realm getRealm() {
     if (mRealm == null) {
       mRealm = Realm.getDefaultInstance();
     }
@@ -39,7 +42,7 @@ public class RealmHelper {
   }
 
   private boolean hasLogined() {
-    return !TextUtils.isEmpty(mUserid);
+    return !TextUtils.isEmpty(mUserId);
   }
 
   public void insertUser(final GitHubUserEntity entity) {
@@ -61,7 +64,7 @@ public class RealmHelper {
     collection.setUrl(entity.getUrl());
     collection.setTitle(entity.getTitle());
     collection.setType(entity.getType());
-    collection.setUserId(mUserid);
+    collection.setUserId(mUserId);
     List<String> images = entity.getImages();
     RealmList<RealmString> realmStrings = new RealmList<>();
     if (images != null) {
@@ -81,7 +84,7 @@ public class RealmHelper {
   }
 
   // 根据url 来删除
-  public void delete(ContentItemEntity entity) {
+  public void delete(final ContentItemEntity entity) {
     if (!hasLogined()) {
       return;
     }
@@ -89,10 +92,11 @@ public class RealmHelper {
     getRealm().executeTransaction(new Realm.Transaction() {
       @Override public void execute(Realm realm) {
         realm.where(CollectionEntity.class)
-            .equalTo("userId", mUserid)
+            .equalTo("userId", mUserId)
             .equalTo("url", url)
             .findFirst()
             .deleteFromRealm();
+        Logger.e("删除的item 标题为：" + entity.getDesc() + "  url:" + entity.getUrl());
         T.info("删除收藏成功!");
       }
     });
@@ -104,18 +108,18 @@ public class RealmHelper {
       return null;
     }
     return getRealm().where(CollectionEntity.class)
-        .equalTo("userId", mUserid)
+        .equalTo("userId", mUserId)
         .equalTo("url", entity.getUrl())
         .findFirst();
   }
 
-  public List<ContentItemEntity> getAllSortedConentItemEntities() {
+  public List<ContentItemEntity> getAllSortedContentItemEntities() {
     if (!hasLogined()) {
       return null;
     }
     // 按照类别排序
     RealmResults<CollectionEntity> all = getRealm().where(CollectionEntity.class)
-        .equalTo("userId", mUserid)
+        .equalTo("userId", mUserId)
         .findAll()
         .sort("type", Sort.ASCENDING);
     List<ContentItemEntity> entities = new ArrayList<>();
@@ -167,30 +171,40 @@ public class RealmHelper {
    * @param content 搜索内容
    * @param currentTime 搜索时间
    */
-  public boolean insertSearchHistory(String content, long currentTime) {
+  public void insertSearchHistory(final String content, final long currentTime) {
     if (!TextUtils.isEmpty(content)) {
-      final SearchHistoryEntity entity = new SearchHistoryEntity();
-      entity.setContent(content);
-      entity.setSearchTime(currentTime);
       getRealm().executeTransaction(new Realm.Transaction() {
         @Override public void execute(Realm realm) {
-          realm.copyToRealmOrUpdate(entity);
+          // 先判断是否有这条记录
+          SearchHistoryEntity query =
+              realm.where(SearchHistoryEntity.class).equalTo("content", content).findFirst();
+          if (query != null) {
+            // 有这条记录更新就行
+            query.setSearchTime(System.currentTimeMillis());
+          } else {
+            SearchHistoryEntity entity = new SearchHistoryEntity();
+            entity.setId(UUID.randomUUID().hashCode());
+            entity.setContent(content);
+            entity.setSearchTime(currentTime);
+            realm.copyToRealmOrUpdate(entity);
+          }
         }
       });
-      return true;
     }
-    return false;
   }
 
   // 返回所有历史记录  默认降序
-  public RealmResults<SearchHistoryEntity> getAllSearchHistory() {
+  public List<SearchHistoryEntity> getAllSearchHistory() {
 
-    return getRealm().where(SearchHistoryEntity.class)
-        .findAll()
-        .sort("searchTime", Sort.DESCENDING);
+    RealmResults<SearchHistoryEntity> searchTime =
+        getRealm().where(SearchHistoryEntity.class).findAll().sort("searchTime", Sort.DESCENDING);
+    if (searchTime.size() > 10) {
+      return searchTime.subList(0, 10);
+    }
+    return searchTime;
   }
 
-  // 删除某条历史记录
+  // 删除某条历史记录  取前10条
   public void deleteSomeHistory(final String content) {
     getRealm().executeTransaction(new Realm.Transaction() {
       @Override public void execute(Realm realm) {
@@ -201,6 +215,16 @@ public class RealmHelper {
       }
     });
   }
+
+  // 删除所有历史记录
+  public void deleteAllHistory() {
+    getRealm().executeTransaction(new Realm.Transaction() {
+      @Override public void execute(Realm realm) {
+        realm.where(SearchHistoryEntity.class).findAll().deleteAllFromRealm();
+      }
+    });
+  }
+
 
   /**
    * close realm

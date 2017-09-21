@@ -11,7 +11,7 @@ import java.util.List;
  */
 
 public class ContentAdapter extends MultiTypeAdapter<ContentItemEntity> {
-
+  // 共用adapter 标识
   private String mFLag;
 
   public ContentAdapter(List<ContentItemEntity> dataList) {
@@ -21,7 +21,7 @@ public class ContentAdapter extends MultiTypeAdapter<ContentItemEntity> {
   }
 
   public ContentAdapter(List<ContentItemEntity> dataList, String FLag) {
-    this(dataList);
+    super(dataList);
     mFLag = FLag;
   }
 

@@ -16,7 +16,7 @@
       android:layout_alignParentTop="true"
       android:background="@color/colorPrimary"
       android:paddingTop="20dp"
-      android:popupTheme="@style/ToolbarPopupTheme"
+      app:popupTheme="@style/ToolbarPopupTheme"
       app:titleTextColor="@color/white"
       >
   </android.support.v7.widget.Toolbar>

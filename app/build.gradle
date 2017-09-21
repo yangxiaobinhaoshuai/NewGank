@@ -60,7 +60,7 @@ dependencies {
   compile('com.yangxiaobin:handsomeToast:1.1.4') {
     exclude group: 'com.android.support'
   }
-  compile('com.yangxiaobin:easy-recyclerview:0.1.6') {
+  compile('com.yangxiaobin:easy-recyclerview:0.1.8') {
     exclude group: 'com.android.support'
   }
   compile('com.yangxiaobin:basekits:1.2.3') {

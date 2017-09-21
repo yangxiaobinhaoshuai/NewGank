@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import butterknife.BindView;
 import com.handsome.library.T;
 import com.yangxiaobin.EasyRecyclerView;
+import com.yangxiaobin.adapter.AdapterWrapper;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.base.BaseFragment;
 import com.yangxiaobin.gank.common.db.RealmHelper;
@@ -62,11 +63,15 @@ public class CollectionFragment extends BaseFragment implements CollectionContra
     getFragmentManager().beginTransaction().remove(this).commitAllowingStateLoss();
   }
 
-  @Override public void setRecyclerViewAdapter(ContentAdapter adapter) {
+  @Override public void setRecyclerViewAdapter(AdapterWrapper adapter) {
     mRecyclerView.setAdapter(adapter);
   }
 
   @Override public RealmHelper getRealmHelper() {
     return mRealmHelper;
+  }
+
+  @Override public EasyRecyclerView getEmptyParent() {
+    return mRecyclerView;
   }
 }

@@ -189,10 +189,11 @@ public class ContentPresenter extends BasePresenter
   }
 
   @Override public void onItemClick(View view, int pos, MotionEvent motionEvent) {
+    // content
+    ContentItemEntity entity = mContentItemEntities.get(pos);
     switch (view.getId()) {
       case R.id.layout_title_content_fragment:
-        // title
-        // start category fragment
+        // title  start category fragment
         if (view.getId() == R.id.layout_title_content_fragment) {
           TextView textView = (TextView) view.findViewById(R.id.tv_item_title_content_fragment);
           FragmentSkiper.getInstance()
@@ -203,26 +204,18 @@ public class ContentPresenter extends BasePresenter
         }
         break;
       case R.id.layout_item_content_fragment:
-        // content
-        ContentItemEntity entity = mContentItemEntities.get(pos);
-        switch (view.getId()) {
-          case R.id.layout_item_content_fragment:
-            startWebFragment(entity, pos);
-            break;
-          case R.id.imgv1_item_content_content_fragment:
-            String url = entity.getImages().get(1);
-            if (!TextUtils.isEmpty(url)) {
-              mPicDialogFragment.setUrl(url);
-              showPicDialog();
-            }
-            break;
-          case R.id.imgv2_item_content_content_fragment:
-            mPicDialogFragment.setUrl(entity.getImages().get(0));
-            showPicDialog();
-            break;
-          default:
-            break;
+        startWebFragment(entity, pos);
+        break;
+      case R.id.imgv1_item_content_content_fragment:
+        String url = entity.getImages().get(1);
+        if (!TextUtils.isEmpty(url)) {
+          mPicDialogFragment.setUrl(url);
+          showPicDialog();
         }
+        break;
+      case R.id.imgv2_item_content_content_fragment:
+        mPicDialogFragment.setUrl(entity.getImages().get(0));
+        showPicDialog();
         break;
       default:
         break;

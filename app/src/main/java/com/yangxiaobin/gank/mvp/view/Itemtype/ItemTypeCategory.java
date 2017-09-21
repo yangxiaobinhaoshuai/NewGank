@@ -17,6 +17,7 @@ import com.yangxiaobin.gank.common.utils.ImageUtils;
 import com.yangxiaobin.gank.common.utils.UserUtils;
 import com.yangxiaobin.gank.mvp.view.adapter.CategoryAdapter;
 import com.yangxiaobin.holder.EasyViewHolder;
+import java.util.List;
 
 /**
  * Created by handsomeyang on 2017/9/13.
@@ -42,7 +43,9 @@ public class ItemTypeCategory implements SlideItemTypeDelegate<CategoryEntity.Re
   @Override
   public void bindData(Context context, EasyViewHolder holder, CategoryEntity.ResultsBean entity,
       int pos) {
-    mRealmHelper = new RealmHelper(context);
+    if (mRealmHelper == null) {
+      mRealmHelper = new RealmHelper(context);
+    }
     //content
     //是否收藏过  先判断是否登录
     if (UserUtils.hasLogined(context)) {
@@ -60,11 +63,13 @@ public class ItemTypeCategory implements SlideItemTypeDelegate<CategoryEntity.Re
     holder.setText(R.id.tv_who_content_content_fragment, entity.getWho());
     holder.setVisible(R.id.tv_when_content_content_fragment, View.VISIBLE);
     holder.setText(R.id.tv_when_content_content_fragment, entity.getPublishedAt().split("T")[0]);
-    if (entity.getImages() != null) {
+    ImageView imageView1 = holder.getView(R.id.imgv1_item_content_content_fragment);
+    ImageView imageView2 = holder.getView(R.id.imgv2_item_content_content_fragment);
+    List<String> images = entity.getImages();
+    if (entity.getImages() != null && images.size() > 0) {
       // 第一张gif
-      String imageUrl2 = entity.getImages().get(0);
+      String imageUrl2 = images.get(0);
       if (!TextUtils.isEmpty(imageUrl2)) {
-        ImageView imageView2 = holder.getView(R.id.imgv2_item_content_content_fragment);
         imageView2.setVisibility(View.VISIBLE);
         ImageUtils.load(context, imageUrl2, imageView2);
       }
@@ -72,12 +77,16 @@ public class ItemTypeCategory implements SlideItemTypeDelegate<CategoryEntity.Re
         // 第二张gif
         String imageUrl1 = entity.getImages().get(1);
         if (!TextUtils.isEmpty(imageUrl1)) {
-          ImageView imageView1 = holder.getView(R.id.imgv1_item_content_content_fragment);
           imageView1.setVisibility(View.VISIBLE);
           Glide.with(context).load(imageUrl1).into(imageView1);
           ImageUtils.load(context, imageUrl1, imageView1);
         }
+      } else {
+        imageView1.setVisibility(View.GONE);
       }
+    } else {
+      imageView1.setVisibility(View.GONE);
+      imageView2.setVisibility(View.GONE);
     }
     // 初始化侧滑菜单
     View tvAdd = holder.getItemView().findViewById(R.id.tv_add_collection_menu_slide);

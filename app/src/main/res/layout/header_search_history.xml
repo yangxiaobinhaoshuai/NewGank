@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:orientation="horizontal"
+    >
+  <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:layout_gravity="start|center_vertical"
+      android:layout_margin="10dp"
+      android:gravity="center_vertical"
+      android:text="最近10条搜索历史"
+      />
+
+  <ImageView
+      android:id="@+id/imgv_close_search_history_list"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="end|center_vertical"
+      android:layout_marginBottom="10dp"
+      android:layout_marginRight="20dp"
+      android:layout_marginTop="10dp"
+      android:src="@drawable/ic_close_white_128"
+      android:tint="@color/Black"
+      />
+
+</FrameLayout>

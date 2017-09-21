@@ -4,9 +4,10 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
 import android.util.DisplayMetrics;
-import android.view.GestureDetector;
 import android.view.WindowManager;
 import android.widget.TextView;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 /**
  * Created by handsomeyang on 2017/7/5.
@@ -16,6 +17,7 @@ public class CommonUtils {
 
   private static Context sContext;
   private static DisplayMetrics mMetrics;
+  private static SimpleDateFormat sSdf;
 
   private CommonUtils() {
   }
@@ -97,5 +99,19 @@ public class CommonUtils {
     // 这一步必须要做,否则不会显示.
     drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
     tv.setCompoundDrawables(drawable, null, null, null);
+  }
+
+  /**
+   * 把毫秒格式化制定日期字符串
+   *
+   * @param currentMills 毫秒
+   * @param pattern 格式
+   * @return 日期字符串
+   */
+  public static String formatTime(long currentMills, String pattern) {
+    if (sSdf == null) {
+      sSdf = new SimpleDateFormat(pattern, Locale.getDefault());
+    }
+    return sSdf.format(currentMills);
   }
 }

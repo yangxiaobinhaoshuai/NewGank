@@ -1,5 +1,6 @@
 package com.yangxiaobin.gank.common.bean;
 
+import io.realm.annotations.Ignore;
 import java.io.Serializable;
 import java.util.List;
 
@@ -18,8 +19,8 @@ public class ContentItemEntity implements Serializable {
    * who : mthli
    */
 
-  private String _id;
-  private String createdAt;
+  @Ignore private String _id;
+  @Ignore private String createdAt;
   private String desc;
   private String publishedAt;
   private String type;
@@ -28,9 +29,8 @@ public class ContentItemEntity implements Serializable {
   private List<String> images;
   private String who;
   private String title;    // 类别标题
-
-  private String ganhuo_id;
-  private String readablity;
+  @Ignore private String ganhuo_id;
+  @Ignore private String readablity;
 
   public String getTitle() {
     return title;
@@ -129,7 +129,7 @@ public class ContentItemEntity implements Serializable {
   }
 
   @Override public String toString() {
-    return "AndroidBean{"
+    return "ContentItemEntity{"
         + "_id='"
         + _id
         + '\''
@@ -150,8 +150,19 @@ public class ContentItemEntity implements Serializable {
         + '\''
         + ", used="
         + used
+        + ", images="
+        + images
         + ", who='"
         + who
+        + '\''
+        + ", title='"
+        + title
+        + '\''
+        + ", ganhuo_id='"
+        + ganhuo_id
+        + '\''
+        + ", readablity='"
+        + readablity
         + '\''
         + '}';
   }

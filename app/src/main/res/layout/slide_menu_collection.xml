@@ -13,7 +13,9 @@
       android:background="@color/colorAccent"
       android:gravity="center"
       android:text="收藏"
+      android:textColor="#FFF"
       android:textSize="18sp"
+      android:textStyle="bold"
       />
 
   <TextView
@@ -24,7 +26,9 @@
       android:background="@color/colorPrimary"
       android:gravity="center"
       android:text="取消收藏"
+      android:textColor="#FFF"
       android:textSize="18sp"
+      android:textStyle="bold"
       android:visibility="gone"
       />
 
