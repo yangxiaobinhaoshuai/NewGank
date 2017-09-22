@@ -7,6 +7,11 @@ MVP+Dagger2.android+Retrofit+RxJava2+Glide+Realm。
 
 ### ScreenShot
 
+<img src="art/1.jpeg" width="200"><img src="art/2.jpeg" width="200"><img src="art/3.jpeg" width="200">
+
+<img src="art/4.jpeg" width="200"><img src="art/5.jpeg" width="200"><img src="art/6.jpeg" width="200">
+
+
 
 ### 功能
 1. GitHub 账户即可登录，无需密码，用户创建本地账户收藏干货用。
