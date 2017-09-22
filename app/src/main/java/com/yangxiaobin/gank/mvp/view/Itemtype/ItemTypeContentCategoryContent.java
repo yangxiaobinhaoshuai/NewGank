@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.handsome.library.T;
+import com.orhanobut.logger.Logger;
 import com.yangxiaobin.adapter.AdapterWrapper;
 import com.yangxiaobin.adapter.SlideItemTypeDelegate;
 import com.yangxiaobin.gank.App;
@@ -83,7 +84,14 @@ public class ItemTypeContentCategoryContent implements SlideItemTypeDelegate<Con
               List<ContentItemEntity> dataList = innerAdapter.getDataList();
               dataList.remove(entity);
               // FIXME: 2017/9/21  pos是不会变的
+              //innerAdapter.notifyItemRemoved(pos);
               //mAdapterWrapper.notifyItemRemoved(pos);
+              //Logger.e("删除的entity："
+              //    + entity.getDesc()
+              //    + "   删除的pos："
+              //    + pos
+              //    + "    datalist："
+              //    + dataList);
               mAdapterWrapper.notifyDataSetChanged();
               return;
             }

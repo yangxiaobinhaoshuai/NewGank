@@ -130,13 +130,7 @@ public class ContentItemEntity implements Serializable {
 
   @Override public String toString() {
     return "ContentItemEntity{"
-        + "_id='"
-        + _id
-        + '\''
-        + ", createdAt='"
-        + createdAt
-        + '\''
-        + ", desc='"
+        + " desc='"
         + desc
         + '\''
         + ", publishedAt='"
@@ -157,13 +151,6 @@ public class ContentItemEntity implements Serializable {
         + '\''
         + ", title='"
         + title
-        + '\''
-        + ", ganhuo_id='"
-        + ganhuo_id
-        + '\''
-        + ", readablity='"
-        + readablity
-        + '\''
         + '}';
   }
 }

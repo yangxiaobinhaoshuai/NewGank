@@ -5,15 +5,18 @@ import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
+import com.yangxiaobin.Constant;
 import com.yangxiaobin.gank.App;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.base.BasePresenter;
 import com.yangxiaobin.gank.common.bean.CategoryEntity;
 import com.yangxiaobin.gank.common.net.ErrorConsumer;
 import com.yangxiaobin.gank.mvp.contract.CategoryContract;
+import com.yangxiaobin.gank.mvp.view.activity.LandscapeVideoActivity;
 import com.yangxiaobin.gank.mvp.view.adapter.CategoryAdapter;
 import com.yangxiaobin.gank.mvp.view.fragment.PicDialogFragment;
 import com.yangxiaobin.gank.mvp.view.fragment.WebFragment;
+import com.yangxiaobin.kits.base.ActivitySkiper;
 import com.yangxiaobin.kits.base.CommonKey;
 import com.yangxiaobin.kits.base.FragmentSkiper;
 import com.yangxiaobin.listener.OnItemClickListener;
@@ -97,15 +100,17 @@ public class CategoryPresenter extends BasePresenter
     CategoryEntity.ResultsBean entity = mResultsBeans.get(pos);
     switch (view.getId()) {
       case R.id.layout_item_content_fragment:
-        // start webfragment
-        String webUrl = mResultsBeans.get(pos).getUrl();
-        String title = mResultsBeans.get(pos).getDesc();
-        FragmentSkiper.getInstance()
-            .init(((FragmentActivity) mView.getViewContext()))
-            .target(new WebFragment().setUrl(webUrl).setTitle(title))
-            .add(android.R.id.content, true);
-        App.getINSTANCE().getItemUrls().add(webUrl);
-        mAdapter.notifyItemChanged(pos);
+        if (entity.getType().equals(Constant.Category.VIDEO)) {
+          // start Video Activity
+          ActivitySkiper.getInstance()
+              .init(mView.getViewContext())
+              .putExtras(CommonKey.STR1, entity.getUrl())
+              .putExtras(CommonKey.STR2, entity.getDesc())
+              .skip(LandscapeVideoActivity.class);
+        } else {
+          // start webFragment
+          startWebFragment(pos, entity);
+        }
         break;
       case R.id.imgv1_item_content_content_fragment:
         String url = entity.getImages().get(1);
@@ -122,6 +127,17 @@ public class CategoryPresenter extends BasePresenter
       default:
         break;
     }
+  }
+
+  private void startWebFragment(int pos, CategoryEntity.ResultsBean entity) {
+    String webUrl = entity.getUrl();
+    String title = entity.getDesc();
+    FragmentSkiper.getInstance()
+        .init(((FragmentActivity) mView.getViewContext()))
+        .target(new WebFragment().setUrl(webUrl).setTitle(title))
+        .add(android.R.id.content, true);
+    App.getINSTANCE().getItemUrls().add(webUrl);
+    mAdapter.notifyItemChanged(pos);
   }
 
   private void showPicDialog() {

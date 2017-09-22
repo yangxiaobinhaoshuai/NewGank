@@ -32,17 +32,17 @@ android {
   aaptOptions.useNewCruncher = false
 }
 
-def supportVerion = "25.3.1"
+def supportVersion = "25.3.1"
 def daggerVersion = "2.11"
 dependencies {
   compile fileTree(include: ['*.jar'], dir: 'libs')
   androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
     exclude group: 'com.android.support', module: 'support-annotations'
   })
-  compile "com.android.support:appcompat-v7:$supportVerion"
-  compile "com.android.support:cardview-v7:$supportVerion"
-  compile "com.android.support:support-v4:$supportVerion"
-  compile "com.android.support:design:$supportVerion"
+  compile "com.android.support:appcompat-v7:$supportVersion"
+  compile "com.android.support:cardview-v7:$supportVersion"
+  compile "com.android.support:support-v4:$supportVersion"
+  compile "com.android.support:design:$supportVersion"
   //  compile files('src/main/lib/renderscript-v8.jar')
   testCompile 'junit:junit:4.12'
   // retrofit+rxjava2

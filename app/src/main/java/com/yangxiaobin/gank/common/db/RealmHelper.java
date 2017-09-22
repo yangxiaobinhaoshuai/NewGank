@@ -96,7 +96,6 @@ public class RealmHelper {
             .equalTo("url", url)
             .findFirst()
             .deleteFromRealm();
-        Logger.e("删除的item 标题为：" + entity.getDesc() + "  url:" + entity.getUrl());
         T.info("删除收藏成功!");
       }
     });
