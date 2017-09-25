@@ -1,5 +1,6 @@
 package com.yangxiaobin.gank.mvp.view.listener;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,6 +10,7 @@ import com.bumptech.glide.request.target.Target;
 import com.orhanobut.logger.Logger;
 import com.yangxiaobin.Constant;
 import com.yangxiaobin.gank.common.bean.GankDailyDataEntity;
+import com.yangxiaobin.gank.common.glide.GlideApp;
 import com.yangxiaobin.gank.common.net.ErrorConsumer;
 import com.yangxiaobin.gank.common.utils.CacheHelper;
 import com.yangxiaobin.gank.mvp.presenter.MainPresenter;
@@ -39,29 +41,42 @@ public class RecyclerViewOnScrollListener extends RecyclerView.OnScrollListener 
 
   @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
     super.onScrollStateChanged(recyclerView, newState);
+    Context context = recyclerView.getContext();
 
     LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-    // 当不滚动时
-    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-      // 渲染背景
-      notifyBackgroundChange();
-      //获取最后一个完全显示的ItemPosition
-      int totalItemCount = linearLayoutManager.getItemCount();
-      int currentPos = linearLayoutManager.findLastCompletelyVisibleItemPosition();
-      //Logger.e("当前item：" + currentPos);
-      if (currentPos >= 0 && mPresenter.getTotalEntities() != null) {
-        // setToolbar title
-        if (currentPos != totalItemCount - 1) {
-          // 防止刷新的时候crash
-          GankDailyDataEntity entity = mPresenter.getTotalEntities().get(currentPos);
-          // 获取日期
-          String todayDate = entity.getResults().get福利().get(0).getPublishedAt().split("T")[0];
-          // 获取制定日期title
-          String todayTitle = entity.getTitle();
-          // 设置toolbar title 第一次加载不会执行，因为没有滑动
-          mPresenter.getView().setToolbarTitle(todayDate + "  " + todayTitle);
+    switch (newState) {
+      case RecyclerView.SCROLL_STATE_IDLE:
+        // glide 4.0 针对RecyclerView优化
+        GlideApp.with(context).resumeRequests();
+        // 当不滚动时
+        // 渲染背景
+        notifyBackgroundChange();
+        //获取最后一个完全显示的ItemPosition
+        int totalItemCount = linearLayoutManager.getItemCount();
+        int currentPos = linearLayoutManager.findLastCompletelyVisibleItemPosition();
+        //Logger.e("当前item：" + currentPos);
+        if (currentPos >= 0 && mPresenter.getTotalEntities() != null) {
+          // setToolbar title
+          if (currentPos != totalItemCount - 1) {
+            // 防止刷新的时候crash
+            GankDailyDataEntity entity = mPresenter.getTotalEntities().get(currentPos);
+            // 获取日期
+            String todayDate = entity.getResults().get福利().get(0).getPublishedAt().split("T")[0];
+            // 获取制定日期title
+            String todayTitle = entity.getTitle();
+            // 设置toolbar title 第一次加载不会执行，因为没有滑动
+            mPresenter.getView().setToolbarTitle(todayDate + "  " + todayTitle);
+          }
         }
-      }
+        break;
+      case RecyclerView.SCROLL_STATE_DRAGGING:
+        GlideApp.with(context).resumeRequests();
+        break;
+      case RecyclerView.SCROLL_STATE_SETTLING:
+        GlideApp.with(context).pauseRequests();
+        break;
+      default:
+        break;
     }
   }
 

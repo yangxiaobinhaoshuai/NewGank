@@ -57,6 +57,7 @@ dependencies {
   implementation rootProject.ext.dependencies["logger"]
   // Glide
   implementation rootProject.ext.dependencies["glide"]
+  implementation rootProject.ext.dependencies["glide-okhttp3"]
   annotationProcessor rootProject.ext.dependencies["glide-complier"]
   // ButterKnife
   implementation rootProject.ext.dependencies["butterknife"]

@@ -56,8 +56,7 @@ ext {
 
                   "glide"                    : "com.github.bumptech.glide:glide:$glideVersion",
                   "glide-complier"           : "com.github.bumptech.glide:compiler:$glideVersion",
-                  "glide-okhttp3"            : "com.github.bumptech.glide:okhttp3-integration:1.4.0@aar",
-
+                  "glide-okhttp3"            : "com.github.bumptech.glide:okhttp3-integration:$glideVersion",
 
                   "bugly"                    : "com.tencent.bugly:nativecrashreport:3.0",
                   "bugly-upgrade"            : "com.tencent.bugly:crashreport_upgrade:1.1.7",

@@ -7,12 +7,10 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.ImageView;
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.pgyersdk.crash.PgyCrashManager;
 import com.yangxiaobin.gank.R;
+import com.yangxiaobin.gank.common.glide.GlideApp;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -32,13 +30,14 @@ public class ImageUtils {
 
   public static void load(Context context, String url, ImageView imageView) {
     try {
-      RequestOptions options = new RequestOptions().placeholder(R.drawable.ic_placeholer_128)
-          .priority(Priority.HIGH)
-          .dontAnimate()
-          .error(R.drawable.ic_error_128)
-          .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);
       // 自动开启内存缓存   默认混存在磁盘上是转换过大小的图片
-      Glide.with(context).load(url).apply(options).into(imageView);
+      GlideApp.with(context)
+          .load(url)
+          .placeholder(R.drawable.ic_placeholer_128)
+          .error(R.drawable.ic_error_128)
+          .dontAnimate()
+          .priority(Priority.HIGH)
+          .into(imageView);
     } catch (IllegalArgumentException ex) {
       Log.wtf("Glide-tag", String.valueOf(imageView.getTag()));
       // pgy 上报 catch 异常
@@ -48,15 +47,14 @@ public class ImageUtils {
 
   public static void load(Context context, String url, ImageView imageView, int width, int height) {
     try {
-      RequestOptions options = new RequestOptions().placeholder(R.drawable.ic_placeholer_128)
-          .dontAnimate()
-          .priority(Priority.HIGH)
-          .override(width, height)
-          .dontAnimate()
-          .error(R.drawable.ic_error_128)
-          .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);
       // 自动开启内存缓存   默认混存在磁盘上是转换过大小的图片
-      Glide.with(context).load(url).apply(options).into(imageView);
+      GlideApp.with(context)
+          .load(url)
+          .placeholder(R.drawable.ic_placeholer_128)
+          .error(R.drawable.ic_error_128)
+          .dontAnimate()
+          .override(width, height)
+          .into(imageView);
     } catch (IllegalArgumentException ex) {
       Log.wtf("Glide-tag", String.valueOf(imageView.getTag()));
       // pgy 上报 catch 异常
@@ -66,16 +64,15 @@ public class ImageUtils {
 
   public static void loadRound(Context context, String url, ImageView imageView) {
     try {
-      RequestOptions options = new RequestOptions().placeholder(R.drawable.ic_placeholer_128)
-          .dontAnimate()
-          .priority(Priority.HIGH)
-          .dontAnimate()
+      // 自动开启内存缓存   默认混存在磁盘上是转换过大小的图片
+      GlideApp.with(context)
+          .load(url)
+          .placeholder(R.drawable.ic_placeholer_128)
           .error(R.drawable.ic_error_128)
           .centerCrop()
+          .dontAnimate()
           .transform(new RoundImageTransformation())
-          .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);
-      // 自动开启内存缓存   默认混存在磁盘上是转换过大小的图片
-      Glide.with(context).load(url).apply(options).into(imageView);
+          .into(imageView);
     } catch (IllegalArgumentException ex) {
       Log.wtf("Glide-tag", String.valueOf(imageView.getTag()));
       // pgy 上报 catch 异常
