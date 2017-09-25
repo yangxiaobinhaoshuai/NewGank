@@ -3,11 +3,9 @@ package com.yangxiaobin.gank.mvp.view.Itemtype;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.handsome.library.T;
-import com.orhanobut.logger.Logger;
 import com.yangxiaobin.gank.App;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.bean.ContentItemEntity;
@@ -16,7 +14,6 @@ import com.yangxiaobin.gank.common.utils.ImageUtils;
 import com.yangxiaobin.gank.common.utils.UserUtils;
 import com.yangxiaobin.gank.mvp.view.adapter.ContentAdapter;
 import com.yangxiaobin.gank.mvp.view.adapter.FlagForContentAdapter;
-import com.yxb.base.utils.ScreenUtils;
 import com.yxb.easy.adapter.AdapterWrapper;
 import com.yxb.easy.adapter.SlideItemTypeDelegate;
 import com.yxb.easy.holder.EasyViewHolder;
@@ -84,8 +81,18 @@ public class ItemTypeContentCategoryContent implements SlideItemTypeDelegate<Con
             if (!TextUtils.isEmpty(fLag) && fLag.equals(FlagForContentAdapter.COLLECTION)) {
               // 收藏列表数据
               List<ContentItemEntity> dataList = innerAdapter.getDataList();
+              ContentItemEntity preEntity = dataList.get(pos - 1);
+              boolean preTitleNotNull = !TextUtils.isEmpty(preEntity.getTitle());
+              // 如果是最后一个返回false
+              boolean postEntityNullOrTitle = isPostEntityNullOrTitle(pos, dataList);
+              if (preTitleNotNull && postEntityNullOrTitle) {
+                //前一个是title 这时最后一个，删除title
+                dataList.remove(pos - 1);
+                mAdapterWrapper.notifyItemRemoved(pos - 1);
+                mAdapterWrapper.notifyItemRangeChanged(pos - 1, mAdapterWrapper.getItemCount());
+              }
+
               dataList.remove(entity);
-              innerAdapter.notifyItemRemoved(pos);
               mAdapterWrapper.notifyItemRemoved(pos);
               mAdapterWrapper.notifyItemRangeChanged(pos, mAdapterWrapper.getItemCount());
               return;
@@ -97,6 +104,14 @@ public class ItemTypeContentCategoryContent implements SlideItemTypeDelegate<Con
       }
       mAdapter.notifyItemChanged(pos);
     }
+  }
+
+  private boolean isPostEntityNullOrTitle(int pos, List<ContentItemEntity> dataList) {
+    if (pos < dataList.size() - 1) {
+      ContentItemEntity postEntity = dataList.get(pos + 1);
+      return !TextUtils.isEmpty(postEntity.getTitle());
+    }
+    return true;
   }
 
   private void initImages(Context context, EasyViewHolder holder, ContentItemEntity entity) {

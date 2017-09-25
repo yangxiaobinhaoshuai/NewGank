@@ -15,7 +15,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import com.github.chrisbanes.photoview.PhotoView;
-import com.orhanobut.logger.Logger;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.utils.ImageUtils;
 import com.yxb.base.utils.ScreenUtils;
