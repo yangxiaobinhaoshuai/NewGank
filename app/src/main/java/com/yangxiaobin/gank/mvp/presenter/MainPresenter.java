@@ -5,8 +5,10 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -18,7 +20,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import com.orhanobut.logger.Logger;
 import com.yangxiaobin.Constant;
-import com.yangxiaobin.adapter.AdapterWrapper;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.base.BasePresenter;
 import com.yangxiaobin.gank.common.bean.GankDailyDataEntity;
@@ -44,10 +45,11 @@ import com.yangxiaobin.gank.mvp.view.fragment.LoginDialogFragment;
 import com.yangxiaobin.gank.mvp.view.fragment.SearchFragment;
 import com.yangxiaobin.gank.mvp.view.fragment.SplashFragment;
 import com.yangxiaobin.gank.mvp.view.fragment.WebFragment;
-import com.yangxiaobin.kits.base.CommonKey;
-import com.yangxiaobin.kits.base.FragmentSkiper;
-import com.yangxiaobin.listener.OnAdapterLoadMoreListener;
-import com.yangxiaobin.listener.OnItemClickListener;
+import com.yxb.base.CommonKey;
+import com.yxb.base.utils.FragmentSkipper;
+import com.yxb.easy.adapter.AdapterWrapper;
+import com.yxb.easy.listener.OnAdapterLoadMoreListener;
+import com.yxb.easy.listener.OnItemClickListener;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
@@ -302,15 +304,15 @@ public class MainPresenter extends BasePresenter
     switch (item.getItemId()) {
       case R.id.about_menu_item_toolbar_main:
         // about
-        FragmentSkiper.getInstance()
-            .init(((FragmentActivity) mView.getViewContext()))
+        FragmentSkipper.getInstance()
+            .init(mView.getViewContext())
             .target(new AboutFragment())
             .add(android.R.id.content, true);
         break;
       case R.id.search_menu_item_toolbar_main:
         // 搜索
-        FragmentSkiper.getInstance()
-            .init(((FragmentActivity) mView.getViewContext()))
+        FragmentSkipper.getInstance()
+            .init(mView.getViewContext())
             .target(new SearchFragment())
             .add(android.R.id.content);
         break;
@@ -322,7 +324,7 @@ public class MainPresenter extends BasePresenter
 
   private void startSplashFragment() {
     mSplashFragment = new SplashFragment();
-    FragmentSkiper.getInstance()
+    FragmentSkipper.getInstance()
         .init(((FragmentActivity) mView.getViewContext()))
         .target(mSplashFragment)
         .add(android.R.id.content);
@@ -338,7 +340,8 @@ public class MainPresenter extends BasePresenter
   private void startContentFragment(View v, int x, int y, int finalRadius, final int pos) {
     CircularRevealUtils.animateRevealHide(v, x, y, finalRadius)
         .addListener(new AnimatorListenerAdapter() {
-          @Override public void onAnimationEnd(Animator animation) {
+          @RequiresApi(api = Build.VERSION_CODES.KITKAT) @Override
+          public void onAnimationEnd(Animator animation) {
             super.onAnimationEnd(animation);
             animation.removeListener(this);
             ContentFragment contentFragment = new ContentFragment();
@@ -346,8 +349,8 @@ public class MainPresenter extends BasePresenter
             contentFragment.setEnterTransition(fade);
             contentFragment.setAllowEnterTransitionOverlap(false);
 
-            FragmentSkiper.getInstance()
-                .init(((FragmentActivity) mView.getViewContext()))
+            FragmentSkipper.getInstance()
+                .init(mView.getViewContext())
                 .target(contentFragment)
                 // 滑动很快点击最后一个时候
                 .putSerializable(CommonKey.OBJ1, mTotalEntities.get(pos))
@@ -426,15 +429,15 @@ public class MainPresenter extends BasePresenter
   }
 
   private void startCollectionFragment() {
-    FragmentSkiper.getInstance()
-        .init(((FragmentActivity) mView.getViewContext()))
+    FragmentSkipper.getInstance()
+        .init(mView.getViewContext())
         .target(new CollectionFragment())
         .add(android.R.id.content, true);
   }
 
   private void startCategoryFragment(@Constant.Category String category) {
-    FragmentSkiper.getInstance()
-        .init(((FragmentActivity) mView.getViewContext()))
+    FragmentSkipper.getInstance()
+        .init(mView.getViewContext())
         .target(new CategoryFragment())
         .putString(CommonKey.STR1, category)
         .add(android.R.id.content, true);
@@ -551,9 +554,5 @@ public class MainPresenter extends BasePresenter
 
   public List<GankDailyDataEntity> getTotalEntities() {
     return mTotalEntities;
-  }
-
-  public long getSkipCount() {
-    return mSkipCount;
   }
 }

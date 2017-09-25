@@ -1,10 +1,10 @@
 package com.yangxiaobin.gank.mvp.view.adapter;
 
-import com.yangxiaobin.adapter.EasyAdapter;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.bean.SearchHistoryEntity;
-import com.yangxiaobin.gank.common.utils.CommonUtils;
-import com.yangxiaobin.holder.EasyViewHolder;
+import com.yxb.base.utils.CommonUtils;
+import com.yxb.easy.adapter.EasyAdapter;
+import com.yxb.easy.holder.EasyViewHolder;
 import java.util.List;
 
 /**

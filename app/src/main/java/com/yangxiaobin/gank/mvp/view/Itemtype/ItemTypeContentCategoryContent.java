@@ -3,12 +3,11 @@ package com.yangxiaobin.gank.mvp.view.Itemtype;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.handsome.library.T;
 import com.orhanobut.logger.Logger;
-import com.yangxiaobin.adapter.AdapterWrapper;
-import com.yangxiaobin.adapter.SlideItemTypeDelegate;
 import com.yangxiaobin.gank.App;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.bean.ContentItemEntity;
@@ -17,7 +16,10 @@ import com.yangxiaobin.gank.common.utils.ImageUtils;
 import com.yangxiaobin.gank.common.utils.UserUtils;
 import com.yangxiaobin.gank.mvp.view.adapter.ContentAdapter;
 import com.yangxiaobin.gank.mvp.view.adapter.FlagForContentAdapter;
-import com.yangxiaobin.holder.EasyViewHolder;
+import com.yxb.base.utils.ScreenUtils;
+import com.yxb.easy.adapter.AdapterWrapper;
+import com.yxb.easy.adapter.SlideItemTypeDelegate;
+import com.yxb.easy.holder.EasyViewHolder;
 import java.util.List;
 
 /**
@@ -83,16 +85,9 @@ public class ItemTypeContentCategoryContent implements SlideItemTypeDelegate<Con
               // 收藏列表数据
               List<ContentItemEntity> dataList = innerAdapter.getDataList();
               dataList.remove(entity);
-              // FIXME: 2017/9/21  pos是不会变的
-              //innerAdapter.notifyItemRemoved(pos);
-              //mAdapterWrapper.notifyItemRemoved(pos);
-              //Logger.e("删除的entity："
-              //    + entity.getDesc()
-              //    + "   删除的pos："
-              //    + pos
-              //    + "    datalist："
-              //    + dataList);
-              mAdapterWrapper.notifyDataSetChanged();
+              innerAdapter.notifyItemRemoved(pos);
+              mAdapterWrapper.notifyItemRemoved(pos);
+              mAdapterWrapper.notifyItemRangeChanged(pos, mAdapterWrapper.getItemCount());
               return;
             }
           }

@@ -31,6 +31,7 @@ public class SplashFragment extends BaseFragment {
   }
 
   @Override protected void initialize(Bundle bundle) {
+    super.initialize(bundle);
     // setimage
     String splashImageUrl = (String) SPUtils.get(mContext, Constant.KEY_SPLASH_IMAGE_PATH, "");
     if (!TextUtils.isEmpty(splashImageUrl)) {

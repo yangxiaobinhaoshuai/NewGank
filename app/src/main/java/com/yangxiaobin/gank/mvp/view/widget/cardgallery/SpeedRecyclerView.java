@@ -3,7 +3,7 @@ package com.yangxiaobin.gank.mvp.view.widget.cardgallery;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import com.yangxiaobin.EasyRecyclerView;
+import com.yxb.easy.EasyRecyclerView;
 
 /**
  * 控制fling速度的RecyclerView

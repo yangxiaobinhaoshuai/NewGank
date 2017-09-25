@@ -7,7 +7,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.handsome.library.T;
-import com.yangxiaobin.adapter.SlideItemTypeDelegate;
 import com.yangxiaobin.gank.App;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.bean.CategoryEntity;
@@ -16,7 +15,8 @@ import com.yangxiaobin.gank.common.db.RealmHelper;
 import com.yangxiaobin.gank.common.utils.ImageUtils;
 import com.yangxiaobin.gank.common.utils.UserUtils;
 import com.yangxiaobin.gank.mvp.view.adapter.CategoryAdapter;
-import com.yangxiaobin.holder.EasyViewHolder;
+import com.yxb.easy.adapter.SlideItemTypeDelegate;
+import com.yxb.easy.holder.EasyViewHolder;
 import java.util.List;
 
 /**

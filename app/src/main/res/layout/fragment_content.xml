@@ -45,13 +45,13 @@
     </android.support.design.widget.CollapsingToolbarLayout>
   </android.support.design.widget.AppBarLayout>
 
-  <com.yangxiaobin.EasyRecyclerView
+  <com.yxb.easy.EasyRecyclerView
       android:id="@+id/auto_recyclerview_content_fragment"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       app:layout_behavior="@string/appbar_scrolling_view_behavior"
       >
-  </com.yangxiaobin.EasyRecyclerView>
+  </com.yxb.easy.EasyRecyclerView>
 
   <android.support.design.widget.FloatingActionButton
       android:id="@+id/fab_content_fragment"

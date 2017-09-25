@@ -2,11 +2,11 @@ package com.yangxiaobin.gank.mvp.view.Itemtype;
 
 import android.content.Context;
 import android.widget.ImageView;
-import com.yangxiaobin.adapter.ItemTypeDelegate;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.bean.GankDailyDataEntity;
 import com.yangxiaobin.gank.common.utils.ImageUtils;
-import com.yangxiaobin.holder.EasyViewHolder;
+import com.yxb.easy.adapter.ItemTypeDelegate;
+import com.yxb.easy.holder.EasyViewHolder;
 
 /**
  * Created by handsomeyang on 2017/9/13.

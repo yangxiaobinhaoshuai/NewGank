@@ -3,7 +3,6 @@ package com.yangxiaobin.gank.common.db;
 import android.content.Context;
 import android.text.TextUtils;
 import com.handsome.library.T;
-import com.orhanobut.logger.Logger;
 import com.yangxiaobin.Constant;
 import com.yangxiaobin.gank.common.bean.CollectionEntity;
 import com.yangxiaobin.gank.common.bean.ContentItemEntity;
@@ -12,7 +11,6 @@ import com.yangxiaobin.gank.common.bean.RealmString;
 import com.yangxiaobin.gank.common.bean.SearchHistoryEntity;
 import com.yangxiaobin.gank.common.utils.SPUtils;
 import io.realm.Realm;
-import io.realm.RealmChangeListener;
 import io.realm.RealmList;
 import io.realm.RealmResults;
 import io.realm.Sort;
@@ -156,6 +154,35 @@ public class RealmHelper {
     return entities;
   }
 
+  public List<ContentItemEntity> getUnTitledContentItemEntities() {
+    if (!hasLogined()) {
+      return null;
+    }
+    // 按照类别排序
+    RealmResults<CollectionEntity> all = getRealm().where(CollectionEntity.class)
+        .equalTo("userId", mUserId)
+        .findAll()
+        .sort("type", Sort.ASCENDING);
+    List<ContentItemEntity> entities = new ArrayList<>();
+    for (CollectionEntity collection : all) {
+      ContentItemEntity itemEntity = new ContentItemEntity();
+      itemEntity.setTitle(collection.getTitle());
+      itemEntity.setDesc(collection.getDesc());
+      itemEntity.setPublishedAt(collection.getPublishedAt());
+      itemEntity.setWho(collection.getWho());
+      itemEntity.setUrl(collection.getUrl());
+      itemEntity.setType(collection.getType());
+      RealmList<RealmString> realmStrings = collection.getImages();
+      List<String> normalStrings = new ArrayList<>();
+      for (RealmString realmString : realmStrings) {
+        normalStrings.add(realmString.getString());
+      }
+      itemEntity.setImages(normalStrings);
+      entities.add(itemEntity);
+    }
+    return entities;
+  }
+
   // 根据登录账号找到用户头像和姓名
   public GitHubUserEntity findUserByUserId(String userId) {
     if (!hasLogined()) {
@@ -223,7 +250,6 @@ public class RealmHelper {
       }
     });
   }
-
 
   /**
    * close realm

@@ -3,12 +3,12 @@ package com.yangxiaobin.gank.mvp.view.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.yangxiaobin.adapter.MultiTypeAdapter;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.bean.GankDailyDataEntity;
 import com.yangxiaobin.gank.mvp.view.Itemtype.ItemTypeMainCard;
 import com.yangxiaobin.gank.mvp.view.widget.cardgallery.CardAdapterHelper;
-import com.yangxiaobin.holder.EasyViewHolder;
+import com.yxb.easy.adapter.MultiTypeAdapter;
+import com.yxb.easy.holder.EasyViewHolder;
 import java.util.List;
 
 /**

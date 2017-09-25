@@ -8,9 +8,10 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.pgyersdk.crash.PgyCrashManager;
-import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.yangxiaobin.gank.R;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -31,14 +32,13 @@ public class ImageUtils {
 
   public static void load(Context context, String url, ImageView imageView) {
     try {
-      // 自动开启内存缓存   默认混存在磁盘上是转换过大小的图片
-      Glide.with(context)
-          .load(url)
-          .placeholder(R.drawable.ic_placeholer_128)
-          .crossFade()
+      RequestOptions options = new RequestOptions().placeholder(R.drawable.ic_placeholer_128)
+          .priority(Priority.HIGH)
           .dontAnimate()
-          .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-          .into(imageView);
+          .error(R.drawable.ic_error_128)
+          .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);
+      // 自动开启内存缓存   默认混存在磁盘上是转换过大小的图片
+      Glide.with(context).load(url).apply(options).into(imageView);
     } catch (IllegalArgumentException ex) {
       Log.wtf("Glide-tag", String.valueOf(imageView.getTag()));
       // pgy 上报 catch 异常
@@ -48,15 +48,15 @@ public class ImageUtils {
 
   public static void load(Context context, String url, ImageView imageView, int width, int height) {
     try {
-      // 自动开启内存缓存   默认混存在磁盘上是转换过大小的图片
-      Glide.with(context)
-          .load(url)
-          .placeholder(R.drawable.ic_placeholer_128)
-          .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-          .crossFade()  // 渐变
-          .error(R.drawable.ic_error_128)
+      RequestOptions options = new RequestOptions().placeholder(R.drawable.ic_placeholer_128)
+          .dontAnimate()
+          .priority(Priority.HIGH)
           .override(width, height)
-          .into(imageView);
+          .dontAnimate()
+          .error(R.drawable.ic_error_128)
+          .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);
+      // 自动开启内存缓存   默认混存在磁盘上是转换过大小的图片
+      Glide.with(context).load(url).apply(options).into(imageView);
     } catch (IllegalArgumentException ex) {
       Log.wtf("Glide-tag", String.valueOf(imageView.getTag()));
       // pgy 上报 catch 异常
@@ -64,18 +64,18 @@ public class ImageUtils {
     }
   }
 
-  public static void loadRound(final Context context, String url, final ImageView imageView) {
+  public static void loadRound(Context context, String url, ImageView imageView) {
     try {
-      // 自动开启内存缓存   默认混存在磁盘上是转换过大小的图片
-      Glide.with(context)
-          .load(url)
-          .placeholder(R.drawable.ic_placeholer_128)
-          .crossFade()
+      RequestOptions options = new RequestOptions().placeholder(R.drawable.ic_placeholer_128)
+          .dontAnimate()
+          .priority(Priority.HIGH)
+          .dontAnimate()
           .error(R.drawable.ic_error_128)
           .centerCrop()
-          .transform(new RoundImageTransformation(context))
-          .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-          .into(imageView);
+          .transform(new RoundImageTransformation())
+          .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);
+      // 自动开启内存缓存   默认混存在磁盘上是转换过大小的图片
+      Glide.with(context).load(url).apply(options).into(imageView);
     } catch (IllegalArgumentException ex) {
       Log.wtf("Glide-tag", String.valueOf(imageView.getTag()));
       // pgy 上报 catch 异常
@@ -84,7 +84,6 @@ public class ImageUtils {
   }
 
   /**
-   *
    * 保存图片到相册
    * http://blog.csdn.net/xu_fu/article/details/39158747
    * 注意写文件权限

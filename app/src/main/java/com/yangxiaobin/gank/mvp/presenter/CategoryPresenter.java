@@ -16,11 +16,11 @@ import com.yangxiaobin.gank.mvp.view.activity.LandscapeVideoActivity;
 import com.yangxiaobin.gank.mvp.view.adapter.CategoryAdapter;
 import com.yangxiaobin.gank.mvp.view.fragment.PicDialogFragment;
 import com.yangxiaobin.gank.mvp.view.fragment.WebFragment;
-import com.yangxiaobin.kits.base.ActivitySkiper;
-import com.yangxiaobin.kits.base.CommonKey;
-import com.yangxiaobin.kits.base.FragmentSkiper;
-import com.yangxiaobin.listener.OnItemClickListener;
-import com.yangxiaobin.refresh.SwipeTopBottomLayout;
+import com.yxb.base.CommonKey;
+import com.yxb.base.utils.ActivitySkipper;
+import com.yxb.base.utils.FragmentSkipper;
+import com.yxb.easy.listener.OnItemClickListener;
+import com.yxb.easy.refresh.SwipeTopBottomLayout;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import java.util.List;
@@ -102,7 +102,7 @@ public class CategoryPresenter extends BasePresenter
       case R.id.layout_item_content_fragment:
         if (entity.getType().equals(Constant.Category.VIDEO)) {
           // start Video Activity
-          ActivitySkiper.getInstance()
+          ActivitySkipper.getInstance()
               .init(mView.getViewContext())
               .putExtras(CommonKey.STR1, entity.getUrl())
               .putExtras(CommonKey.STR2, entity.getDesc())
@@ -132,8 +132,8 @@ public class CategoryPresenter extends BasePresenter
   private void startWebFragment(int pos, CategoryEntity.ResultsBean entity) {
     String webUrl = entity.getUrl();
     String title = entity.getDesc();
-    FragmentSkiper.getInstance()
-        .init(((FragmentActivity) mView.getViewContext()))
+    FragmentSkipper.getInstance()
+        .init(mView.getViewContext())
         .target(new WebFragment().setUrl(webUrl).setTitle(title))
         .add(android.R.id.content, true);
     App.getINSTANCE().getItemUrls().add(webUrl);

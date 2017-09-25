@@ -1,13 +1,13 @@
 package com.yangxiaobin.gank.mvp.contract;
 
 import android.graphics.Bitmap;
-import com.yangxiaobin.adapter.AdapterWrapper;
 import com.yangxiaobin.gank.common.base.IBaseModel;
 import com.yangxiaobin.gank.common.base.IBaseView;
 import com.yangxiaobin.gank.common.bean.GankDailyDataEntity;
 import com.yangxiaobin.gank.common.bean.GankDailyTitleEntity;
 import com.yangxiaobin.gank.common.bean.GankTotalHistoryEntity;
 import com.yangxiaobin.gank.common.bean.GitHubUserEntity;
+import com.yxb.easy.adapter.AdapterWrapper;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.Single;

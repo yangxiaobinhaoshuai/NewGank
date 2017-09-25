@@ -1,8 +1,8 @@
 package com.yangxiaobin.gank.common.base;
 
 import android.os.Bundle;
-import android.widget.ProgressBar;
-import com.yangxiaobin.kits.base.AbsBaseActivity;
+import butterknife.ButterKnife;
+import com.yxb.base.AbsBaseActivity;
 import dagger.android.AndroidInjection;
 
 /**
@@ -13,7 +13,8 @@ public abstract class BaseActivity<V, T extends BasePresenter<V>> extends AbsBas
 
   protected T mPresenter;//Presenter对象
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
+
+  @SuppressWarnings("unchecked") @Override protected void onCreate(Bundle savedInstanceState) {
     AndroidInjection.inject(this);
     super.onCreate(savedInstanceState);
     mPresenter = createPresenter();//创建Presenter

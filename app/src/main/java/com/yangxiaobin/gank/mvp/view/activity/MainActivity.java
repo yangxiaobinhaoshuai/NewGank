@@ -19,20 +19,18 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.handsome.library.T;
-import com.orhanobut.logger.Logger;
 import com.pgyersdk.update.PgyUpdateManager;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.yangxiaobin.Constant;
-import com.yangxiaobin.adapter.AdapterWrapper;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.base.BaseActivity;
 import com.yangxiaobin.gank.common.base.BasePresenter;
 import com.yangxiaobin.gank.common.bean.GitHubUserEntity;
 import com.yangxiaobin.gank.common.db.RealmHelper;
 import com.yangxiaobin.gank.common.utils.BlurBitmapUtils;
-import com.yangxiaobin.gank.common.utils.CommonUtils;
 import com.yangxiaobin.gank.common.utils.ImageUtils;
 import com.yangxiaobin.gank.common.utils.ImmersiveStatusBarUtils;
 import com.yangxiaobin.gank.common.utils.SPUtils;
@@ -42,6 +40,8 @@ import com.yangxiaobin.gank.mvp.presenter.MainPresenter;
 import com.yangxiaobin.gank.mvp.view.listener.RecyclerViewOnScrollListener;
 import com.yangxiaobin.gank.mvp.view.widget.cardgallery.CardScaleHelper;
 import com.yangxiaobin.gank.mvp.view.widget.cardgallery.SpeedRecyclerView;
+import com.yxb.base.utils.ConvertUtils;
+import com.yxb.easy.adapter.AdapterWrapper;
 import io.reactivex.functions.Consumer;
 import java.lang.reflect.Field;
 import javax.inject.Inject;
@@ -67,6 +67,7 @@ public class MainActivity extends BaseActivity implements MainContract.View {
   }
 
   @Override protected void initialize(Bundle bundle) {
+    ButterKnife.bind(this);
     ImmersiveStatusBarUtils.makeImmersivable(this);
     mPresenter.start();
     initNavigationView();
@@ -88,10 +89,8 @@ public class MainActivity extends BaseActivity implements MainContract.View {
   }
 
   private void initUser(View headerView) {
-    mUserImageView =
-        (ImageView) headerView.findViewById(R.id.imgv_header_drawer_navigationview_main);
-    mTvUserName =
-        (TextView) headerView.findViewById(R.id.tv_username_heaer_drawer_navigationview_main);
+    mUserImageView = headerView.findViewById(R.id.imgv_header_drawer_navigationview_main);
+    mTvUserName = headerView.findViewById(R.id.tv_username_heaer_drawer_navigationview_main);
     // 是否登录过
     String userId = (String) SPUtils.get(mContext, Constant.KEY_USER_ID_LOGIN, "");
     if (!TextUtils.isEmpty(userId)) {
@@ -160,12 +159,13 @@ public class MainActivity extends BaseActivity implements MainContract.View {
       TextView tvTitle = (TextView) field.get(mToolbar);
       if (tvTitle != null) {
         tvTitle.setSingleLine(false);
-        tvTitle.setTextSize(CommonUtils.sp2px(5));
+        tvTitle.setTextSize(ConvertUtils.sp2px(5));
         tvTitle.setPadding(0, 0, 0, 5);
       }
-    } catch (NoSuchFieldException | IllegalAccessException e) {
-      e.printStackTrace();
-      Logger.e("反射错误：" + e);
+    } catch (IllegalAccessException e1) {
+      e1.printStackTrace();
+    } catch (NoSuchFieldException e1) {
+      e1.printStackTrace();
     }
     mToolbar.setTitle(title);
   }
@@ -219,7 +219,7 @@ public class MainActivity extends BaseActivity implements MainContract.View {
 
   @Override public void stopLoadingMore() {
     // 当前卡片向左移动
-    mSpeedRecyclerView.smoothScrollBy(CommonUtils.dp2px(150), 0);
+    mSpeedRecyclerView.smoothScrollBy(ConvertUtils.dp2px(150), 0);
   }
 
   @Override public void setUserHeadImage(String url) {

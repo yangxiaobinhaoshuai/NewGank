@@ -1,11 +1,10 @@
 package com.yangxiaobin.gank.mvp.contract;
 
-import com.yangxiaobin.EasyRecyclerView;
-import com.yangxiaobin.adapter.AdapterWrapper;
 import com.yangxiaobin.gank.common.base.IBaseModel;
 import com.yangxiaobin.gank.common.base.IBaseView;
 import com.yangxiaobin.gank.common.db.RealmHelper;
-import com.yangxiaobin.gank.mvp.view.adapter.ContentAdapter;
+import com.yxb.easy.EasyRecyclerView;
+import com.yxb.easy.adapter.AdapterWrapper;
 
 /**
  * Created by handsomeyang on 2017/8/15.

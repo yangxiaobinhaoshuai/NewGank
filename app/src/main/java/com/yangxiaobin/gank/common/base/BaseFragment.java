@@ -1,12 +1,13 @@
 package com.yangxiaobin.gank.common.base;
 
 import android.content.Context;
-import com.yangxiaobin.kits.base.AbsBaseFragment;
-import dagger.android.AndroidInjector;
-import dagger.android.DispatchingAndroidInjector;
-import dagger.android.DispatchingAndroidInjector_Factory;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.view.View;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+import com.yxb.base.AbsBaseFragment;
 import dagger.android.support.AndroidSupportInjection;
-import dagger.android.support.AndroidSupportInjectionModule;
 
 /**
  * Created by handsomeyang on 2017/6/23.
@@ -14,8 +15,20 @@ import dagger.android.support.AndroidSupportInjectionModule;
 
 public abstract class BaseFragment extends AbsBaseFragment implements IBaseView {
 
+  private Unbinder mBind;
+
+  @Override protected void initialize(Bundle savedInstanceState) {
+    mBind = ButterKnife.bind(this, mRootView);
+  }
+
+
   @Override public void onAttach(Context context) {
     AndroidSupportInjection.inject(this);
     super.onAttach(context);
+  }
+
+  @Override public void onDestroy() {
+    super.onDestroy();
+    mBind.unbind();
   }
 }

@@ -3,7 +3,7 @@ package com.yangxiaobin.gank.mvp.view.widget.cardgallery;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import com.yangxiaobin.gank.common.utils.CommonUtils;
+import com.yxb.base.utils.ConvertUtils;
 
 /**
  * adapter中调用onCreateViewHolder, onBindViewHolder
@@ -15,16 +15,16 @@ public class CardAdapterHelper {
 
   public void onCreateViewHolder(ViewGroup parent, View itemView) {
     RecyclerView.LayoutParams lp = (RecyclerView.LayoutParams) itemView.getLayoutParams();
-    lp.width = parent.getWidth() - CommonUtils.dp2px(2 * (mPagePadding + mShowLeftCardWidth));
+    lp.width = parent.getWidth() - ConvertUtils.dp2px(2 * (mPagePadding + mShowLeftCardWidth));
     itemView.setLayoutParams(lp);
   }
 
   public void onBindViewHolder(View itemView, final int position, int itemCount) {
-    int padding = CommonUtils.dp2px(mPagePadding);
+    int padding = ConvertUtils.dp2px(mPagePadding);
     itemView.setPadding(padding, 0, padding, 0);
-    int leftMarin = position == 0 ? padding + CommonUtils.dp2px(mShowLeftCardWidth) : 0;
+    int leftMarin = position == 0 ? padding + ConvertUtils.dp2px(mShowLeftCardWidth) : 0;
     int rightMarin =
-        position == itemCount - 1 ? padding + CommonUtils.dp2px(mShowLeftCardWidth) : 0;
+        position == itemCount - 1 ? padding + ConvertUtils.dp2px(mShowLeftCardWidth) : 0;
     setViewMargin(itemView, leftMarin, 0, rightMarin, 0);
   }
 

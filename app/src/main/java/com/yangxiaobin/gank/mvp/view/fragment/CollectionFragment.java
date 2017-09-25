@@ -8,15 +8,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import butterknife.BindView;
 import com.handsome.library.T;
-import com.yangxiaobin.EasyRecyclerView;
-import com.yangxiaobin.adapter.AdapterWrapper;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.base.BaseFragment;
 import com.yangxiaobin.gank.common.db.RealmHelper;
 import com.yangxiaobin.gank.common.utils.UserUtils;
 import com.yangxiaobin.gank.mvp.contract.CollectionContract;
 import com.yangxiaobin.gank.mvp.presenter.CollectionPresenter;
-import com.yangxiaobin.gank.mvp.view.adapter.ContentAdapter;
+import com.yxb.easy.EasyRecyclerView;
+import com.yxb.easy.adapter.AdapterWrapper;
 import javax.inject.Inject;
 
 /**
@@ -34,6 +33,7 @@ public class CollectionFragment extends BaseFragment implements CollectionContra
   }
 
   @Override protected void initialize(Bundle bundle) {
+    super.initialize(bundle);
     mToolbar.setTitle("收藏");
     mToolbar.setNavigationIcon(R.drawable.ic_left_arraw_128);
     mToolbar.setNavigationOnClickListener(mPresenter);

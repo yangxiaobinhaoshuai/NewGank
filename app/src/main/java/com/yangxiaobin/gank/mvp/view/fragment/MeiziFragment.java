@@ -6,14 +6,16 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
 import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.handsome.library.T;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.utils.ImageUtils;
-import com.yangxiaobin.kits.base.AbsBaseFragment;
-import com.yangxiaobin.kits.base.CommonKey;
+import com.yxb.base.AbsBaseFragment;
+import com.yxb.base.CommonKey;
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
@@ -29,12 +31,14 @@ public class MeiziFragment extends AbsBaseFragment implements View.OnLongClickLi
 
   @BindView(R.id.photoview_meizi_fragment) PhotoView mPhotoView;
   private String mMeiziUrl;
+  private Unbinder mBind;
 
   @Override protected int getLayoutResId() {
     return R.layout.fragment_meizi;
   }
 
   @Override protected void initialize(Bundle bundle) {
+    mBind = ButterKnife.bind(this, mRootView);
     Bundle arguments = getArguments();
     if (arguments != null) {
       mMeiziUrl = arguments.getString(CommonKey.STR1);
@@ -46,8 +50,7 @@ public class MeiziFragment extends AbsBaseFragment implements View.OnLongClickLi
   }
 
   private void showSnackBar(View v) {
-    Snackbar snackbar =
-        Snackbar.make(v, "下载妹子？", Snackbar.LENGTH_SHORT);
+    Snackbar snackbar = Snackbar.make(v, "下载妹子？", Snackbar.LENGTH_SHORT);
     if (!TextUtils.isEmpty("下载")) {
       snackbar.setAction("下载", new View.OnClickListener() {
         @Override public void onClick(View v) {
@@ -85,5 +88,10 @@ public class MeiziFragment extends AbsBaseFragment implements View.OnLongClickLi
             }
           }
         });
+  }
+
+  @Override public void onDestroy() {
+    super.onDestroy();
+    mBind.unbind();
   }
 }

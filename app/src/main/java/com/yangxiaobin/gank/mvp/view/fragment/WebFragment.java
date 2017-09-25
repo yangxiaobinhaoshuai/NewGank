@@ -95,7 +95,7 @@ public class WebFragment extends Fragment
   }
 
   private void initToolbar() {
-    sToolbar = (Toolbar) mRootView.findViewById(R.id.toolbar_web_fragment);
+    sToolbar = mRootView.findViewById(R.id.toolbar_web_fragment);
     sToolbar.setNavigationIcon(R.drawable.ic_left_arraw_128);
     sToolbar.inflateMenu(R.menu.menu_web_fragment);
     sToolbar.setOnMenuItemClickListener(this);
@@ -109,6 +109,7 @@ public class WebFragment extends Fragment
             (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
         // 将文本内容放到系统剪贴板里。
         ClipData url = ClipData.newPlainText("webUrl", mUrl);
+        assert cm != null;
         cm.setPrimaryClip(url);
         T.info("成功复制URL到剪切板");
         break;

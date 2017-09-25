@@ -18,6 +18,7 @@ import com.github.chrisbanes.photoview.PhotoView;
 import com.orhanobut.logger.Logger;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.utils.ImageUtils;
+import com.yxb.base.utils.ScreenUtils;
 
 /**
  * Created by handsomeyang on 2017/8/16.
@@ -38,7 +39,9 @@ public class PicDialogFragment extends DialogFragment {
     unbinder = ButterKnife.bind(this, rootView);
     if (!TextUtils.isEmpty(mUrl)) {
       //Logger.e("图片URL："+mUrl);
-      ImageUtils.load(getContext(), mUrl, mImageView);
+      float screenHeight = ScreenUtils.getScreenHeight();
+      ImageUtils.load(getContext(), mUrl, mImageView, ((int) screenHeight),
+          ((int) (screenHeight * 3 / 4)));
     }
     mDialog = getDialog();
     mDialog.setCanceledOnTouchOutside(true);

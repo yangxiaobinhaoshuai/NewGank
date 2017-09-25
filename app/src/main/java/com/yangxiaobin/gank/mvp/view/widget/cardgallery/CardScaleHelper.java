@@ -3,7 +3,7 @@ package com.yangxiaobin.gank.mvp.view.widget.cardgallery;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import com.orhanobut.logger.Logger;
-import com.yangxiaobin.gank.common.utils.CommonUtils;
+import com.yxb.base.utils.ConvertUtils;
 
 /**
  * Created by jameson on 8/30/16.
@@ -62,7 +62,7 @@ public class CardScaleHelper {
     mRecyclerView.post(new Runnable() {
       @Override public void run() {
         mCardGalleryWidth = mRecyclerView.getWidth();
-        mCardWidth = mCardGalleryWidth - CommonUtils.dp2px(2 * (mPagePadding + mShowLeftCardWidth));
+        mCardWidth = mCardGalleryWidth - ConvertUtils.dp2px(2 * (mPagePadding + mShowLeftCardWidth));
         mOnePageWidth = mCardWidth;
         mRecyclerView.smoothScrollToPosition(mCurrentItemPos);
         onScrolledChangedCallback();

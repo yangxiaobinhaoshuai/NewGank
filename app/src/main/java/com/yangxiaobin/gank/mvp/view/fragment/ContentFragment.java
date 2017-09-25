@@ -10,15 +10,16 @@ import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
 import butterknife.BindView;
 import com.handsome.library.T;
-import com.yangxiaobin.EasyRecyclerView;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.base.BaseFragment;
 import com.yangxiaobin.gank.common.db.RealmHelper;
-import com.yangxiaobin.gank.common.utils.CommonUtils;
 import com.yangxiaobin.gank.common.utils.ImageUtils;
 import com.yangxiaobin.gank.mvp.contract.ContentContract;
 import com.yangxiaobin.gank.mvp.presenter.ContentPresenter;
 import com.yangxiaobin.gank.mvp.view.adapter.ContentAdapter;
+import com.yxb.base.utils.ConvertUtils;
+import com.yxb.base.utils.ScreenUtils;
+import com.yxb.easy.EasyRecyclerView;
 import javax.inject.Inject;
 
 /**
@@ -38,6 +39,7 @@ public class ContentFragment extends BaseFragment implements ContentContract.Vie
   }
 
   @Override protected void initialize(Bundle bundle) {
+    super.initialize(bundle);
     mPresenter.start();
   }
 
@@ -79,8 +81,8 @@ public class ContentFragment extends BaseFragment implements ContentContract.Vie
   }
 
   @Override public void setImageViewUrl(String url) {
-    float screenWidth = CommonUtils.getScreenWidth();
-    int height = CommonUtils.dp2px(156);
+    float screenWidth = ScreenUtils.getScreenWidth();
+    int height = ConvertUtils.dp2px(156);
     ImageUtils.load(mContext, url, mImageView, ((int) screenWidth), height);
   }
 

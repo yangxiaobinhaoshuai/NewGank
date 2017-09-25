@@ -2,7 +2,9 @@ package com.yangxiaobin.gank.mvp.presenter;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.transition.ChangeBounds;
@@ -25,10 +27,10 @@ import com.yangxiaobin.gank.mvp.view.fragment.CategoryFragment;
 import com.yangxiaobin.gank.mvp.view.fragment.MeiziFragment;
 import com.yangxiaobin.gank.mvp.view.fragment.PicDialogFragment;
 import com.yangxiaobin.gank.mvp.view.fragment.WebFragment;
-import com.yangxiaobin.kits.base.ActivitySkiper;
-import com.yangxiaobin.kits.base.CommonKey;
-import com.yangxiaobin.kits.base.FragmentSkiper;
-import com.yangxiaobin.listener.OnItemClickListener;
+import com.yxb.base.CommonKey;
+import com.yxb.base.utils.ActivitySkipper;
+import com.yxb.base.utils.FragmentSkipper;
+import com.yxb.easy.listener.OnItemClickListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -157,7 +159,8 @@ public class ContentPresenter extends BasePresenter
   private void startMeiziFragmentWithAnim(final View v) {
     // imageview click listener
     CircularRevealUtils.animateRevealHide(v).addListener(new AnimatorListenerAdapter() {
-      @Override public void onAnimationEnd(Animator animation) {
+      @RequiresApi(api = Build.VERSION_CODES.KITKAT) @Override
+      public void onAnimationEnd(Animator animation) {
         super.onAnimationEnd(animation);
         MeiziFragment meiziFragment = new MeiziFragment();
         Fade fade = new Fade();
@@ -168,20 +171,22 @@ public class ContentPresenter extends BasePresenter
         changeBounds.setDuration(300);
         meiziFragment.setSharedElementEnterTransition(changeBounds);
 
-        FragmentSkiper.getInstance()
-            .init(((FragmentActivity) mView.getViewContext()))
+        FragmentSkipper.getInstance()
+            .init(mView.getViewContext())
             .target(meiziFragment)
             .addSharedElement(v,
                 mView.getViewContext().getString(R.string.share_element_main_item_to_content))
             .putString(CommonKey.STR1, mMeiZiUrl)
-            .replace(android.R.id.content, true);
+            // 只有replace 才有动画
+            //.replace(android.R.id.content)
+            .add(android.R.id.content);
       }
     });
   }
 
   // 跳转横屏activity播放
   private void startVideoActivity(String url, String title) {
-    ActivitySkiper.getInstance()
+    ActivitySkipper.getInstance()
         .init(mView.getViewContext())
         .putExtras(CommonKey.STR1, url)
         .putExtras(CommonKey.STR2, title)
@@ -195,9 +200,9 @@ public class ContentPresenter extends BasePresenter
       case R.id.layout_title_content_fragment:
         // title  start category fragment
         if (view.getId() == R.id.layout_title_content_fragment) {
-          TextView textView = (TextView) view.findViewById(R.id.tv_item_title_content_fragment);
-          FragmentSkiper.getInstance()
-              .init(((FragmentActivity) mView.getViewContext()))
+          TextView textView = view.findViewById(R.id.tv_item_title_content_fragment);
+          FragmentSkipper.getInstance()
+              .init(mView.getViewContext())
               .target(new CategoryFragment())
               .putString(CommonKey.STR1, textView.getText().toString().trim())
               .add(android.R.id.content, true);
@@ -227,8 +232,8 @@ public class ContentPresenter extends BasePresenter
     if (Constant.Category.VIDEO.equals(entity.getType())) {
       startVideoActivity(mVideoEntity.getUrl(), mVideoEntity.getDesc());
     } else {
-      FragmentSkiper.getInstance()
-          .init(((FragmentActivity) mView.getViewContext()))
+      FragmentSkipper.getInstance()
+          .init(mView.getViewContext())
           .target(new WebFragment().setUrl(entity.getUrl()).setTitle(entity.getDesc()))
           .add(android.R.id.content, true);
     }

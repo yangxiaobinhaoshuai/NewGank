@@ -7,14 +7,14 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import butterknife.BindView;
-import com.yangxiaobin.EasyRecyclerView;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.base.BaseFragment;
 import com.yangxiaobin.gank.common.db.RealmHelper;
 import com.yangxiaobin.gank.mvp.contract.CategoryContract;
 import com.yangxiaobin.gank.mvp.presenter.CategoryPresenter;
 import com.yangxiaobin.gank.mvp.view.adapter.CategoryAdapter;
-import com.yangxiaobin.refresh.SwipeTopBottomLayout;
+import com.yxb.easy.EasyRecyclerView;
+import com.yxb.easy.refresh.SwipeTopBottomLayout;
 import javax.inject.Inject;
 
 /**
@@ -33,6 +33,7 @@ public class CategoryFragment extends BaseFragment implements CategoryContract.V
   }
 
   @Override protected void initialize(Bundle bundle) {
+    super.initialize(bundle);
     mPresenter.start();
     // toolbar
     mToolbar.setNavigationIcon(R.drawable.ic_left_arraw_128);

@@ -6,7 +6,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.SearchView;
@@ -20,22 +19,23 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.PopupWindow;
 import com.yangxiaobin.Constant;
-import com.yangxiaobin.EasyRecyclerView;
-import com.yangxiaobin.adapter.AdapterWrapper;
 import com.yangxiaobin.gank.App;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.base.BasePresenter;
 import com.yangxiaobin.gank.common.bean.CategoryEntity;
 import com.yangxiaobin.gank.common.bean.SearchHistoryEntity;
 import com.yangxiaobin.gank.common.net.ErrorConsumer;
-import com.yangxiaobin.gank.common.utils.CommonUtils;
 import com.yangxiaobin.gank.mvp.contract.SearchContract;
 import com.yangxiaobin.gank.mvp.view.adapter.CategoryAdapter;
 import com.yangxiaobin.gank.mvp.view.adapter.SearchHistoryAdapter;
 import com.yangxiaobin.gank.mvp.view.fragment.WebFragment;
-import com.yangxiaobin.kits.base.FragmentSkiper;
-import com.yangxiaobin.listener.OnItemClickListener;
-import com.yangxiaobin.refresh.SwipeTopBottomLayout;
+import com.yxb.base.utils.ConvertUtils;
+import com.yxb.base.utils.FragmentSkipper;
+import com.yxb.base.utils.ScreenUtils;
+import com.yxb.easy.EasyRecyclerView;
+import com.yxb.easy.adapter.AdapterWrapper;
+import com.yxb.easy.listener.OnItemClickListener;
+import com.yxb.easy.refresh.SwipeTopBottomLayout;
 import io.reactivex.functions.Consumer;
 import java.util.List;
 import javax.inject.Inject;
@@ -85,11 +85,11 @@ public class SearchPresenter extends BasePresenter
   @RequiresApi(api = Build.VERSION_CODES.M) private void initPopupWindow() {
     mPopupWindow = new PopupWindow(mView.getViewContext());
     mPopupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-    mScreenWidth = CommonUtils.getScreenWidth();
+    mScreenWidth = ScreenUtils.getScreenWidth();
     mPopupWindow.setWidth(((int) (mScreenWidth * 9 / 10)));
     mPopupWindow.setBackgroundDrawable(
         new ColorDrawable(mView.getViewContext().getColor(R.color.white)));
-    mPopupWindow.setElevation(CommonUtils.dp2px(10));
+    mPopupWindow.setElevation(ConvertUtils.dp2px(10));
     Slide enterSlide = new Slide();
     enterSlide.setSlideEdge(Gravity.TOP);
     mPopupWindow.setEnterTransition(enterSlide);
@@ -280,8 +280,8 @@ public class SearchPresenter extends BasePresenter
         break;
       case R.id.layout_item_content_fragment:
         String url = mTotalResults.get(pos).getUrl();
-        FragmentSkiper.getInstance()
-            .init(((FragmentActivity) mView.getViewContext()))
+        FragmentSkipper.getInstance()
+            .init(mView.getViewContext())
             .target(new WebFragment().setUrl(url))
             .add(android.R.id.content);
         App.getINSTANCE().getItemUrls().add(url);

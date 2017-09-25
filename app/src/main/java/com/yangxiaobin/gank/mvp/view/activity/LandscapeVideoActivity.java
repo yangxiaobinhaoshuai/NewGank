@@ -10,8 +10,8 @@ import android.widget.RelativeLayout;
 import com.handsome.library.T;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.mvp.view.fragment.WebFragment;
-import com.yangxiaobin.kits.base.CommonKey;
-import com.yangxiaobin.kits.base.FragmentSkiper;
+import com.yxb.base.CommonKey;
+import com.yxb.base.utils.FragmentSkipper;
 
 public class LandscapeVideoActivity extends AppCompatActivity {
 
@@ -27,7 +27,7 @@ public class LandscapeVideoActivity extends AppCompatActivity {
     String title = intent.getStringExtra(CommonKey.STR2);
     if (!TextUtils.isEmpty(url)) {
       WebFragment webFragment = new WebFragment();
-      FragmentSkiper.getInstance()
+      FragmentSkipper.getInstance()
           .init(this)
           .target(webFragment.setUrl(url).setTitle(title))
           .add(R.id.framelayout_landscape_video_activity);

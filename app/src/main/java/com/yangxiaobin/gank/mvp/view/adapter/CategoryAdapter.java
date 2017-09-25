@@ -1,8 +1,8 @@
 package com.yangxiaobin.gank.mvp.view.adapter;
 
-import com.yangxiaobin.adapter.MultiTypeAdapter;
 import com.yangxiaobin.gank.common.bean.CategoryEntity;
 import com.yangxiaobin.gank.mvp.view.Itemtype.ItemTypeCategory;
+import com.yxb.easy.adapter.MultiTypeAdapter;
 import java.util.List;
 
 /**

@@ -15,6 +15,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import com.yangxiaobin.Constant;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.bean.GitHubUserEntity;
@@ -24,7 +26,7 @@ import com.yangxiaobin.gank.common.utils.ImageUtils;
 import com.yangxiaobin.gank.common.utils.RxUtils;
 import com.yangxiaobin.gank.common.utils.SPUtils;
 import com.yangxiaobin.gank.di.scope.LoginUsed;
-import com.yangxiaobin.kits.base.AbsBaseFragment;
+import com.yxb.base.AbsBaseFragment;
 import dagger.android.support.AndroidSupportInjection;
 import io.reactivex.functions.Consumer;
 import javax.inject.Inject;
@@ -40,6 +42,7 @@ public class AboutFragment extends AbsBaseFragment implements View.OnClickListen
   @BindView(R.id.imgv_author_head_about_fragment) ImageView mImageViewAuthor;
   @BindView(R.id.tv_github_page_about_framgent) TextView mTvGithubPage;
   @Inject @LoginUsed Retrofit mRetrofit;
+  private Unbinder mBind;
 
   @Override protected int getLayoutResId() {
     return R.layout.fragment_about;
@@ -51,6 +54,7 @@ public class AboutFragment extends AbsBaseFragment implements View.OnClickListen
   }
 
   @Override protected void initialize(Bundle bundle) {
+    mBind = ButterKnife.bind(this, mRootView);
     mToolbar.setNavigationOnClickListener(this);
     initAboutApp();
     initAboutAuthor();
@@ -108,10 +112,15 @@ public class AboutFragment extends AbsBaseFragment implements View.OnClickListen
         + "\r\n  · 缓存清理";
 
     mTvAboutContent.setText(aboutText);
-    mContainer.setBackgroundResource(R.drawable.bg_dialog_fragment_login_github);
+    mRootView.setBackgroundResource(R.drawable.bg_dialog_fragment_login_github);
   }
 
   @Override public void onClick(View v) {
     getFragmentManager().popBackStack();
+  }
+
+  @Override public void onDestroy() {
+    super.onDestroy();
+    mBind.unbind();
   }
 }

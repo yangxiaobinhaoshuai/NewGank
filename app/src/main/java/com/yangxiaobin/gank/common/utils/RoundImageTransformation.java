@@ -1,23 +1,19 @@
 package com.yangxiaobin.gank.common.utils;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
+import java.security.MessageDigest;
 
 /**
  * Created by handsomeyang on 2017/8/15.
- *  create iamgeview by glide
+ * create imageview by glide
  */
 
 public class RoundImageTransformation extends BitmapTransformation {
-
-  public RoundImageTransformation(Context context) {
-    super(context);
-  }
 
   @Override
   protected Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
@@ -31,9 +27,6 @@ public class RoundImageTransformation extends BitmapTransformation {
     int y = (source.getHeight() - size) / 2;
     Bitmap squared = Bitmap.createBitmap(source, x, y, size, size);
     Bitmap result = pool.get(size, size, Bitmap.Config.ARGB_8888);
-    if (result == null) {
-      result = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
-    }
     Canvas canvas = new Canvas(result);
     Paint paint = new Paint();
     paint.setShader(
@@ -44,7 +37,7 @@ public class RoundImageTransformation extends BitmapTransformation {
     return result;
   }
 
-  @Override public String getId() {
-    return getClass().getName();
+  @Override public void updateDiskCacheKey(MessageDigest messageDigest) {
+
   }
 }

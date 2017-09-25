@@ -2,12 +2,12 @@ package com.yangxiaobin.gank.mvp.contract;
 
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import com.yangxiaobin.EasyRecyclerView;
 import com.yangxiaobin.gank.common.base.IBaseModel;
 import com.yangxiaobin.gank.common.base.IBaseView;
 import com.yangxiaobin.gank.common.bean.CategoryEntity;
 import com.yangxiaobin.gank.common.db.RealmHelper;
 import com.yangxiaobin.gank.mvp.view.adapter.CategoryAdapter;
+import com.yxb.easy.EasyRecyclerView;
 import io.reactivex.Flowable;
 
 /**

@@ -1,14 +1,16 @@
 package com.yangxiaobin.gank.mvp.view.Itemtype;
 
 import android.content.Context;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.widget.TextView;
 import com.yangxiaobin.Constant;
-import com.yangxiaobin.adapter.ItemTypeDelegate;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.bean.ContentItemEntity;
-import com.yangxiaobin.gank.common.utils.CommonUtils;
-import com.yangxiaobin.holder.EasyViewHolder;
+import com.yxb.base.utils.CommonUtils;
+import com.yxb.easy.adapter.ItemTypeDelegate;
+import com.yxb.easy.holder.EasyViewHolder;
 
 /**
  * Created by handsomeyang on 2017/9/13.
@@ -24,7 +26,7 @@ public class ItemTypeContentCategoryTitle implements ItemTypeDelegate<ContentIte
     return !TextUtils.isEmpty(contentItemEntity.getTitle());
   }
 
-  @Override
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) @Override
   public void bindData(Context context, EasyViewHolder holder, ContentItemEntity entity, int pos) {
     //title
     String title = entity.getTitle();

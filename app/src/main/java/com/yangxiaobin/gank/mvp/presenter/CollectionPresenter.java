@@ -6,9 +6,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
-import com.orhanobut.logger.Logger;
 import com.yangxiaobin.Constant;
-import com.yangxiaobin.adapter.AdapterWrapper;
 import com.yangxiaobin.gank.App;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.base.BasePresenter;
@@ -22,12 +20,11 @@ import com.yangxiaobin.gank.mvp.view.adapter.FlagForContentAdapter;
 import com.yangxiaobin.gank.mvp.view.fragment.CategoryFragment;
 import com.yangxiaobin.gank.mvp.view.fragment.PicDialogFragment;
 import com.yangxiaobin.gank.mvp.view.fragment.WebFragment;
-import com.yangxiaobin.kits.base.ActivitySkiper;
-import com.yangxiaobin.kits.base.CommonKey;
-import com.yangxiaobin.kits.base.FragmentSkiper;
-import com.yangxiaobin.listener.OnItemClickListener;
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
+import com.yxb.base.CommonKey;
+import com.yxb.base.utils.ActivitySkipper;
+import com.yxb.base.utils.FragmentSkipper;
+import com.yxb.easy.adapter.AdapterWrapper;
+import com.yxb.easy.listener.OnItemClickListener;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -89,9 +86,9 @@ public class CollectionPresenter extends BasePresenter
       case R.id.layout_title_content_fragment:
         // title  start category fragment
         if (view.getId() == R.id.layout_title_content_fragment) {
-          TextView textView = (TextView) view.findViewById(R.id.tv_item_title_content_fragment);
-          FragmentSkiper.getInstance()
-              .init(((FragmentActivity) mView.getViewContext()))
+          TextView textView = view.findViewById(R.id.tv_item_title_content_fragment);
+          FragmentSkipper.getInstance()
+              .init(mView.getViewContext())
               .target(new CategoryFragment())
               .putString(CommonKey.STR1, textView.getText().toString().trim())
               .add(android.R.id.content, true);
@@ -121,8 +118,8 @@ public class CollectionPresenter extends BasePresenter
     if (Constant.Category.VIDEO.equals(entity.getType())) {
       startVideoActivity(entity);
     } else {
-      FragmentSkiper.getInstance()
-          .init(((FragmentActivity) mView.getViewContext()))
+      FragmentSkipper.getInstance()
+          .init(mView.getViewContext())
           .target(new WebFragment().setUrl(entity.getUrl()).setTitle(entity.getDesc()))
           .add(android.R.id.content, true);
     }
@@ -132,7 +129,7 @@ public class CollectionPresenter extends BasePresenter
 
   // 跳转横屏activity播放
   private void startVideoActivity(ContentItemEntity entity) {
-    ActivitySkiper.getInstance()
+    ActivitySkipper.getInstance()
         .init(mView.getViewContext())
         .putExtras(CommonKey.STR1, entity.getUrl())
         .putExtras(CommonKey.STR2, entity.getDesc())

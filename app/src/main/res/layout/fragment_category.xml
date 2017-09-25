@@ -17,10 +17,10 @@
       app:titleTextColor="@color/white"
       >
   </android.support.v7.widget.Toolbar>
-  <com.yangxiaobin.EasyRecyclerView
+  <com.yxb.easy.EasyRecyclerView
       android:id="@+id/recyclerview_single_category_fragment"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       >
-  </com.yangxiaobin.EasyRecyclerView>
+  </com.yxb.easy.EasyRecyclerView>
 </LinearLayout>
