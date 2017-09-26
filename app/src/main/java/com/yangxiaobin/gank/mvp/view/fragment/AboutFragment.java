@@ -106,7 +106,7 @@ public class AboutFragment extends AbsBaseFragment implements View.OnClickListen
         + "\r\n功能："
         + "\r\n  · 每日干货推荐"
         + "\r\n  · 干货分类查询"
-        + "\r\n  · 干货长按收藏/移除收藏"
+        + "\r\n  · 侧滑收藏/移除收藏干货"
         + "\r\n  · 用户管理"
         + "\r\n  · 下载喜欢的妹子做壁纸 :)"
         + "\r\n  · 缓存清理";
