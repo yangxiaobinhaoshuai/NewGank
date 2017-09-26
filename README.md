@@ -11,6 +11,7 @@ MVP+Dagger2.android+Retrofit+RxJava2+Glide+Realm。
 
 <img src="art/4.jpeg" width="200"><img src="art/5.jpeg" width="200"><img src="art/6.jpeg" width="200">
 
+### [APK下载](apk/app-debug.apk)
 
 
 ### 功能
