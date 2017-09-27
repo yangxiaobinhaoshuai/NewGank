@@ -109,8 +109,10 @@ public class CategoryPresenter extends BasePresenter
               .skip(LandscapeVideoActivity.class);
         } else {
           // start webFragment
-          startWebFragment(pos, entity);
+          startWebFragment(entity);
         }
+        App.getINSTANCE().getItemUrls().add(entity.getUrl());
+        mAdapter.notifyItemChanged(pos);
         break;
       case R.id.imgv1_item_content_content_fragment:
         String url = entity.getImages().get(1);
@@ -129,15 +131,13 @@ public class CategoryPresenter extends BasePresenter
     }
   }
 
-  private void startWebFragment(int pos, CategoryEntity.ResultsBean entity) {
+  private void startWebFragment(CategoryEntity.ResultsBean entity) {
     String webUrl = entity.getUrl();
     String title = entity.getDesc();
     FragmentSkipper.getInstance()
         .init(mView.getViewContext())
         .target(new WebFragment().setUrl(webUrl).setTitle(title))
         .add(android.R.id.content, true);
-    App.getINSTANCE().getItemUrls().add(webUrl);
-    mAdapter.notifyItemChanged(pos);
   }
 
   private void showPicDialog() {

@@ -23,12 +23,16 @@ import com.yangxiaobin.gank.App;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.base.BasePresenter;
 import com.yangxiaobin.gank.common.bean.CategoryEntity;
+import com.yangxiaobin.gank.common.bean.ContentItemEntity;
 import com.yangxiaobin.gank.common.bean.SearchHistoryEntity;
 import com.yangxiaobin.gank.common.net.ErrorConsumer;
 import com.yangxiaobin.gank.mvp.contract.SearchContract;
+import com.yangxiaobin.gank.mvp.view.activity.LandscapeVideoActivity;
 import com.yangxiaobin.gank.mvp.view.adapter.CategoryAdapter;
 import com.yangxiaobin.gank.mvp.view.adapter.SearchHistoryAdapter;
 import com.yangxiaobin.gank.mvp.view.fragment.WebFragment;
+import com.yxb.base.CommonKey;
+import com.yxb.base.utils.ActivitySkipper;
 import com.yxb.base.utils.ConvertUtils;
 import com.yxb.base.utils.FragmentSkipper;
 import com.yxb.base.utils.ScreenUtils;
@@ -279,17 +283,31 @@ public class SearchPresenter extends BasePresenter
         mAdapterWrapper.notifyItemRemoved(pos);
         break;
       case R.id.layout_item_content_fragment:
-        String url = mTotalResults.get(pos).getUrl();
-        FragmentSkipper.getInstance()
-            .init(mView.getViewContext())
-            .target(new WebFragment().setUrl(url))
-            .add(android.R.id.content);
+        CategoryEntity.ResultsBean entity = mTotalResults.get(pos);
+        String url = entity.getUrl();
+        if (Constant.Category.VIDEO.equals(entity.getType())) {
+          startVideoActivity(entity);
+        } else {
+          FragmentSkipper.getInstance()
+              .init(mView.getViewContext())
+              .target(new WebFragment().setUrl(url))
+              .add(android.R.id.content);
+        }
         App.getINSTANCE().getItemUrls().add(url);
         mAdapter.notifyItemChanged(pos);
         break;
       default:
         break;
     }
+  }
+
+  // 跳转横屏activity播放
+  private void startVideoActivity(ContentItemEntity entity) {
+    ActivitySkipper.getInstance()
+        .init(mView.getViewContext())
+        .putExtras(CommonKey.STR1, entity.getUrl())
+        .putExtras(CommonKey.STR2, entity.getDesc())
+        .skip(LandscapeVideoActivity.class);
   }
 
   private void dismissPopUpWindow() {
