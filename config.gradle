@@ -17,8 +17,9 @@ ext {
   def retrofit2Version = "2.3.0"
   def butterKnifeVersion = "8.8.1"
   def easyRecyclerViewVersion = "0.1.0"
-  def baseToolsVersion = "0.1.0"
+  def baseToolsVersion = "0.1.4"
   def glideVersion = "4.1.1"
+  def loggerVersion="2.1.1"
 
   dependencies = ["test"                     : "junit:junit:4.12",
 
@@ -50,7 +51,7 @@ ext {
                   "dagger2-processor"        : "com.google.dagger:dagger-compiler:$daggerVersion",
 
                   "logging-interceptor"      : "com.squareup.okhttp3:logging-interceptor:3.9.0",
-                  "logger"                   : "com.orhanobut:logger:1.15",
+                  "logger"                   : "com.orhanobut:logger:$loggerVersion",
 
                   "pullToRefresh"            : "com.carme.module:pullToRefresh:1.0.13",
 

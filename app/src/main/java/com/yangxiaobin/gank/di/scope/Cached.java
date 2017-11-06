@@ -10,5 +10,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * Created by handsomeyang on 2017/6/28.
  */
 
-@Qualifier @Documented @Retention(RUNTIME) public @interface Catched {
+@Qualifier @Documented @Retention(RUNTIME) public @interface Cached {
 }

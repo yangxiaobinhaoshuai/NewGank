@@ -4,11 +4,13 @@ import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import android.util.Log;
 import com.orhanobut.logger.Logger;
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
 import java.util.ArrayList;
 import java.util.List;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -25,10 +27,9 @@ import static org.junit.Assert.*;
     Context appContext = InstrumentationRegistry.getTargetContext();
 
     //assertEquals("com.yangxiaobin.gank", appContext.getPackageName());
-    Observable.just(1, 2, 3, 4, 5, 6, 7, 8, 9).take(3).skip(2).subscribe(new Consumer<Integer>() {
-      @Override public void accept(Integer integer) throws Exception {
-        Logger.e(integer + "");
-      }
-    });
+    JSONObject jsonObject=new JSONObject();
+    jsonObject.put("111","222");
+    jsonObject.put("3333","4444");
+    Log.e("1111",jsonObject.toString());
   }
 }

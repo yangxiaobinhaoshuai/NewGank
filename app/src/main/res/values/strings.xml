@@ -37,4 +37,5 @@
   <string name="about_author">关于作者</string>
   <string name="name_author">杨晓彬</string>
   <string name="github_home_page">github主页</string>
+  <string name="no_cache">0.00</string>
 </resources>

@@ -98,7 +98,6 @@ public class ContentPresenter extends BasePresenter
     if (休息视频 != null) {
       mVideoEntity = 休息视频.get(0);
     }
-    SPUtils.put(mView.getViewContext(), Constant.KEY_SPLASH_IMAGE_PATH, mMeiZiUrl);
     mView.setImageViewUrl(mMeiZiUrl);
   }
 

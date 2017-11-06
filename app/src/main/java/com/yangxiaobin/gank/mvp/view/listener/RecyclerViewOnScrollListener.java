@@ -7,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import com.bumptech.glide.request.target.Target;
 import com.orhanobut.logger.Logger;
-import com.yangxiaobin.Constant;
 import com.yangxiaobin.gank.common.bean.GankDailyDataEntity;
 import com.yangxiaobin.gank.common.glide.GlideApp;
 import com.yangxiaobin.gank.common.net.ErrorConsumer;
@@ -28,7 +27,9 @@ import org.reactivestreams.Publisher;
  */
 
 public class RecyclerViewOnScrollListener extends RecyclerView.OnScrollListener {
-  //用来标记是否正在向最后一个滑动
+  /**
+   * 用来标记是否正在向最后一个滑动
+   */
   private MainPresenter mPresenter;
   private CacheHelper mCacheHelper;
   private BitmapFactory.Options mOptions;
@@ -44,7 +45,8 @@ public class RecyclerViewOnScrollListener extends RecyclerView.OnScrollListener 
     Context context = recyclerView.getContext();
     LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
     switch (newState) {
-      case RecyclerView.SCROLL_STATE_IDLE:// 当不滚动时
+      // 当不滚动时
+      case RecyclerView.SCROLL_STATE_IDLE:
         // glide 4.0 针对RecyclerView优化
         GlideApp.with(context).resumeRequests();
         //获取最后一个完全显示的ItemPosition
@@ -52,7 +54,6 @@ public class RecyclerViewOnScrollListener extends RecyclerView.OnScrollListener 
         mCurrentPos = linearLayoutManager.findLastCompletelyVisibleItemPosition();
         // 渲染背景
         notifyBackgroundChange();
-        Logger.e("当前item：" + mCurrentPos);
         if (mCurrentPos >= 0 && mPresenter.getTotalEntities() != null) {
           // setToolbar title
           if (mCurrentPos != totalItemCount - 1) {
@@ -98,7 +99,6 @@ public class RecyclerViewOnScrollListener extends RecyclerView.OnScrollListener 
     final String url = gankDailyDataEntity.getResults().get福利().get(0).getUrl();
     Bitmap bitmap = mCacheHelper.getLruCache().get(url);
     if (bitmap != null) {
-      //Logger.e("从lru中获取");
       mPresenter.getView().startSwitchBgAnim(bitmap);
     } else {
       // 没有缓存

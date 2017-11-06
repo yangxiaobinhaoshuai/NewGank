@@ -34,13 +34,9 @@ public interface MainContract {
 
     void setToolbarTitle(String title);
 
-    void setUpRecyclerView();
-
-    void setRecyclerViewAdapter(AdapterWrapper adapter);
+    void setUpRecyclerView(AdapterWrapper adapter);
 
     void initCardHelper();
-
-    int getCurrentItemPos();
 
     void startSwitchBgAnim(Bitmap bitmap);
 
@@ -56,6 +52,8 @@ public interface MainContract {
   }
 
   interface Presenter {
+
+    void restart();
 
     void onDestroy();
 

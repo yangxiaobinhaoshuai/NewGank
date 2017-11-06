@@ -56,7 +56,6 @@ public class MainActivity extends BaseActivity implements MainContract.View {
 
   private ImageView mUserImageView;
   private TextView mTvUserName;
-  private CardScaleHelper mCardScaleHelper;
   private RecyclerViewOnScrollListener mRecyclerViewOnScrollListener;
 
   @Inject RealmHelper mRealmHelper;
@@ -148,7 +147,11 @@ public class MainActivity extends BaseActivity implements MainContract.View {
     }
   }
 
-  // 通过反射改变toolbar 样式
+  /**
+   * 通过反射改变toolbar 样式
+   *
+   * @param title toolbar title
+   */
   @Override public void setToolbarTitle(String title) {
     //获取类对象
     Class<?> clazz;
@@ -170,7 +173,7 @@ public class MainActivity extends BaseActivity implements MainContract.View {
     mToolbar.setTitle(title);
   }
 
-  @Override public void setUpRecyclerView() {
+  @Override public void setUpRecyclerView(AdapterWrapper adapter) {
     mSpeedRecyclerView.setLayoutManager(
         new LinearLayoutManager(this, LinearLayout.HORIZONTAL, false));
     // 滑动处理
@@ -179,18 +182,15 @@ public class MainActivity extends BaseActivity implements MainContract.View {
     // 点击监听
     mSpeedRecyclerView.setOnItemClickListener(mPresenter);
     mSpeedRecyclerView.setAntiShake(1000);
-  }
-
-  @Override public void setRecyclerViewAdapter(AdapterWrapper adapter) {
     mSpeedRecyclerView.setAdapter(adapter);
   }
 
   @Override public void initCardHelper() {
     // mRecyclerView绑定scale效果
-    mCardScaleHelper = new CardScaleHelper();
+    CardScaleHelper cardScaleHelper = new CardScaleHelper();
     // 展示第一页
-    mCardScaleHelper.setCurrentItemPos(0);
-    mCardScaleHelper.attachToRecyclerView(mSpeedRecyclerView);
+    cardScaleHelper.setCurrentItemPos(0);
+    cardScaleHelper.attachToRecyclerView(mSpeedRecyclerView);
     // 第一次加载第一个item 渲染背景
     mRecyclerViewOnScrollListener.notifyBackgroundChange();
   }
@@ -205,11 +205,6 @@ public class MainActivity extends BaseActivity implements MainContract.View {
 
   @Override public void showToast(String msg) {
     T.info(msg);
-  }
-
-  @Override public int getCurrentItemPos() {
-    return mCardScaleHelper != null ? mCardScaleHelper.getCurrentItemPos()
-        : Constant.RECYCLERVIEW_CARD_HELPER_NULL;
   }
 
   @Override public void startSwitchBgAnim(Bitmap bitmap) {
@@ -236,8 +231,17 @@ public class MainActivity extends BaseActivity implements MainContract.View {
   }
 
   @Override public View showLoadError() {
-    ((ViewStub) findViewById(R.id.viewstub_load_error_main_activity)).inflate();
+    ViewStub viewStub = findViewById(R.id.viewstub_load_error_main_activity);
+    if (viewStub != null) {
+      viewStub.inflate();
+    }
     return findViewById(R.id.inflate_id_load_error);
+  }
+
+
+  @Override protected void onRestart() {
+    super.onRestart();
+    mPresenter.restart();
   }
 
   @Override protected void onDestroy() {

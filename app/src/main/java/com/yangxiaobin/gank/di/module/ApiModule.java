@@ -1,6 +1,7 @@
 package com.yangxiaobin.gank.di.module;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -10,11 +11,11 @@ import com.yangxiaobin.Constant;
 import com.yangxiaobin.gank.App;
 import com.yangxiaobin.gank.BuildConfig;
 import com.yangxiaobin.gank.common.net.ApiService;
-import com.yangxiaobin.gank.common.utils.NetworkUtils;
 import com.yangxiaobin.gank.common.utils.Unicode2ChineseUtils;
-import com.yangxiaobin.gank.di.scope.Catched;
+import com.yangxiaobin.gank.di.scope.Cached;
 import com.yangxiaobin.gank.di.scope.LoginUsed;
 import com.yangxiaobin.gank.di.scope.UnCatched;
+import com.yxb.base.utils.NetworkUtils;
 import dagger.Module;
 import dagger.Provides;
 import io.realm.Realm;
@@ -74,19 +75,19 @@ import retrofit2.converter.gson.GsonConverterFactory;
     return interceptor;
   }
 
-  @Provides @Singleton Interceptor provideCacheInterceptor(final Context context) {
+  @Provides @Singleton Interceptor provideCacheInterceptor() {
     return new Interceptor() {
       Response response;
 
-      @Override public Response intercept(Chain chain) throws IOException {
+      @Override public Response intercept(@NonNull Chain chain) throws IOException {
         Request request = chain.request();
         //网络不可用
-        if (!NetworkUtils.isAvailable(context)) {
+        if (!NetworkUtils.isNetworkAvailable()) {
           //在请求头中加入：强制使用缓存，不访问网络
           request = request.newBuilder().cacheControl(CacheControl.FORCE_CACHE).build();
           response = chain.proceed(request);
-          // 无网络时，在响应头中加入：设置超时为4周
-          int maxStale = 60 * 60 * 24 * 28;
+          // 无网络时，在响应头中加入：设置超时为1周
+          int maxStale = 60 * 60 * 24 * 7;
           response.newBuilder()
               .header("Cache-Control", "public, only-if-cached, max-stale=" + maxStale)
               .build();
@@ -103,7 +104,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
   }
 
   // 带缓存client
-  @Provides @Catched @Singleton OkHttpClient provideCatchedOkHttpClient(
+  @Provides @Cached @Singleton OkHttpClient provideCachedOkHttpClient(
       HttpLoggingInterceptor interceptor, Interceptor cacheInterceptor, Cache cache) {
     return new OkHttpClient.Builder().addInterceptor(interceptor)
         .addInterceptor(cacheInterceptor)
@@ -131,7 +132,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
   }
 
   // 默认使用网络缓存
-  @Provides @Singleton public Retrofit provideRetrofit(@Catched OkHttpClient client) {
+  @Provides @Singleton public Retrofit provideRetrofit(@Cached OkHttpClient client) {
     return new Retrofit.Builder().client(client)
         .baseUrl(Constant.BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())

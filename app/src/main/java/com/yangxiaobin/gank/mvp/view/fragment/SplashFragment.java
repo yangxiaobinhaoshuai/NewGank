@@ -3,19 +3,14 @@ package com.yangxiaobin.gank.mvp.view.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.widget.ImageView;
 import butterknife.BindView;
-import com.yangxiaobin.Constant;
 import com.yangxiaobin.gank.R;
 import com.yangxiaobin.gank.common.base.BaseFragment;
-import com.yangxiaobin.gank.common.utils.ImageUtils;
-import com.yangxiaobin.gank.common.utils.SPUtils;
+import com.yangxiaobin.gank.common.utils.Rx2Bus;
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -32,23 +27,16 @@ public class SplashFragment extends BaseFragment {
 
   @Override protected void initialize(Bundle bundle) {
     super.initialize(bundle);
-    // setimage
-    String splashImageUrl = (String) SPUtils.get(mContext, Constant.KEY_SPLASH_IMAGE_PATH, "");
-    if (!TextUtils.isEmpty(splashImageUrl)) {
-      ImageUtils.load(mContext, splashImageUrl, mImageView);
-    }
+    // mainActivity 联网成功post事件
+    mSubscribe = Rx2Bus.getDefault().toFlowable(String.class).subscribe(new Consumer<String>() {
+      @Override public void accept(String s) throws Exception {
+        destroySelf();
+      }
+    });
+  }
 
-    // destroy self
-    mSubscribe = Observable.timer(Constant.SPLASH_FINISH_DELAY, TimeUnit.MILLISECONDS)
-        .subscribeOn(Schedulers.newThread())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Consumer<Long>() {
-          @Override public void accept(Long aLong) throws Exception {
-            getFragmentManager().beginTransaction()
-                .remove(SplashFragment.this)
-                .commitAllowingStateLoss();
-          }
-        });
+  private void destroySelf() {
+    getFragmentManager().beginTransaction().remove(SplashFragment.this).commitAllowingStateLoss();
   }
 
   @Override public Context getViewContext() {

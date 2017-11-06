@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
   <!-- Base application theme. -->
   <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -6,6 +6,8 @@
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
+    <!--解决冷启动白屏-->
+    <item name="android:windowIsTranslucent">true</item>
 
     <!--去标题栏-->
     <item name="windowActionBar">false</item>
@@ -14,7 +16,7 @@
     <item name="android:textColorSecondary">@color/white</item>
     <!--开启ShareElement-->
     <!--https://github.com/lgvalle/Material-Animations/-->
-    <item name="android:windowContentTransitions">true</item>
+    <item name="android:windowContentTransitions" tools:targetApi="lollipop">true</item>
   </style>
 
   <!--xml -->
@@ -36,4 +38,5 @@
   <style name="OverflowMenuStyle" parent="Widget.AppCompat.Light.PopupMenu.Overflow">
     <item name="overlapAnchor">false</item>  <!--把该属性改为false即可使menu位置位于toolbar之下-->
   </style>
+
 </resources>

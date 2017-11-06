@@ -7,8 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -26,8 +28,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import com.handsome.library.T;
 import com.yangxiaobin.gank.R;
-import com.yangxiaobin.gank.common.utils.NetworkUtils;
 import com.yangxiaobin.gank.mvp.view.activity.LandscapeVideoActivity;
+import com.yxb.base.utils.NetworkUtils;
 import java.lang.ref.WeakReference;
 
 /**
@@ -75,7 +77,7 @@ public class WebFragment extends Fragment
     initWebSettings();
     // webView load url
     if (!TextUtils.isEmpty(mUrl)) {
-      if (NetworkUtils.isAvailable(getContext())) {
+      if (NetworkUtils.isNetworkAvailable()) {
         mWebView.loadUrl(mUrl);
       } else {
         T.error(getContext().getString(R.string.net_is_not_available));
@@ -232,7 +234,8 @@ public class WebFragment extends Fragment
     private boolean isFristLink;
 
     //不调用浏览器，自己打开网页
-    @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) @Override
+    public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
       view.loadUrl(request.getUrl().toString());
       return super.shouldOverrideUrlLoading(view, request);
     }

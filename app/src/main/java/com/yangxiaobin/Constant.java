@@ -10,20 +10,26 @@ import java.lang.annotation.RetentionPolicy;
  */
 
 public final class Constant {
-  //  gank io api
+  /**
+   * gank io api
+   */
   public static final String BASE_URL = "http://gank.io/api/";
   public static final long CONNECT_TIMEOUT = 15000;
   public static final long READ_TIMEOUT = 15000;
   public static final long WRITE_TIMEOUT = 15000;
+  public static final int SAFT_QUIT_INTERVAL = 2000;
   public static final String CACHE_FILE_NAME = "gank.cache";
   public static final int MEIZI_COUNT = 5;        //默认取5天数据
   public static final int RECYCLERVIEW_CARD_HELPER_NULL = -1;
-  public static final long SPLASH_FINISH_DELAY = 3000;
-  // SP key
-  public static final String KEY_SPLASH_IMAGE_PATH = "key_splash_image_path";
+  public static final String FINISH_SPLASH = "finish_splash";
+  /**
+   * SP key
+   */
   public static final String KEY_HAS_GOT_MY_HEAD_IMAGE = "key_has_got_my_head_image";
 
-  // gank item category
+  /**
+   * gank item category
+   */
   @StringDef @Retention(RetentionPolicy.SOURCE) public @interface Category {
     String ANDROID = "Android";
     String IOS = "iOS";
@@ -36,9 +42,13 @@ public final class Constant {
     String ALL = "all";
   }
 
-  // github config
+  /**
+   * github config
+   */
   public static final String GITHUB_SERVER = "https://api.github.com/";
-  // my github account for my head image
+  /**
+   * my github account for my head image
+   */
   public static final String MY_GITHUB_ACCOUNT = "yangxiaobinhaoshuai";
 
   // SharePreference key

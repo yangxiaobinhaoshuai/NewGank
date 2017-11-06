@@ -2,13 +2,18 @@ package com.yangxiaobin.gank;
 
 import android.support.v4.app.Fragment;
 import com.handsome.library.T;
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
 import com.pgyersdk.crash.PgyCrashManager;
+import com.yangxiaobin.gank.common.bean.GankDailyDataEntity;
+import com.yangxiaobin.gank.common.utils.RxUtils;
 import com.yangxiaobin.gank.di.component.DaggerAppComponent;
 import com.yxb.base.utils.CommonUtils;
 import dagger.android.AndroidInjector;
 import dagger.android.DaggerApplication;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
+import io.reactivex.Observable;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import java.util.ArrayList;
@@ -43,8 +48,10 @@ public class App extends DaggerApplication implements HasSupportFragmentInjector
   private void initialize() {
     sINSTANCE = this;
     CommonUtils.init(this);
+    // doc: https://github.com/orhanobut/logger
+    Logger.addLogAdapter(new AndroidLogAdapter());
     T.init(this);
-    // the realm file will be loacted in Context.getFilesDir() with the name "realm.default"
+    // the realm file will be located in Context.getFilesDir() with the name "realm.default"
     Realm.init(this);
     RealmConfiguration configuration =
         new RealmConfiguration.Builder().name("gank.realm").deleteRealmIfMigrationNeeded().build();

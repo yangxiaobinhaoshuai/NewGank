@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +19,7 @@ import android.transition.Fade;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 import com.orhanobut.logger.Logger;
 import com.yangxiaobin.Constant;
 import com.yangxiaobin.gank.R;
@@ -30,7 +32,6 @@ import com.yangxiaobin.gank.common.net.ApiExceptionHandler;
 import com.yangxiaobin.gank.common.net.ErrorConsumer;
 import com.yangxiaobin.gank.common.utils.CircularRevealUtils;
 import com.yangxiaobin.gank.common.utils.CleanCatcheUtils;
-import com.yangxiaobin.gank.common.utils.NetworkUtils;
 import com.yangxiaobin.gank.common.utils.Rx2Bus;
 import com.yangxiaobin.gank.common.utils.RxUtils;
 import com.yangxiaobin.gank.common.utils.SPUtils;
@@ -47,6 +48,7 @@ import com.yangxiaobin.gank.mvp.view.fragment.SplashFragment;
 import com.yangxiaobin.gank.mvp.view.fragment.WebFragment;
 import com.yxb.base.CommonKey;
 import com.yxb.base.utils.FragmentSkipper;
+import com.yxb.base.utils.NetworkUtils;
 import com.yxb.easy.adapter.AdapterWrapper;
 import com.yxb.easy.listener.OnAdapterLoadMoreListener;
 import com.yxb.easy.listener.OnItemClickListener;
@@ -57,7 +59,6 @@ import io.reactivex.functions.BiConsumer;
 import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
-import java.io.EOFException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -70,7 +71,7 @@ import org.reactivestreams.Publisher;
 public class MainPresenter extends BasePresenter
     implements MainContract.Presenter, NavigationView.OnNavigationItemSelectedListener,
     View.OnClickListener, Toolbar.OnMenuItemClickListener, OnItemClickListener,
-    OnAdapterLoadMoreListener {
+    OnAdapterLoadMoreListener, DialogInterface.OnClickListener {
 
   private MainContract.View mView;
   private MainContract.Model mModel;
@@ -82,31 +83,47 @@ public class MainPresenter extends BasePresenter
   private boolean isLoadingMore;
   private LoginDialogFragment mDialogFragment;
   private ProgressDialog mProgressDialog;
-  private SplashFragment mSplashFragment;
   private boolean isError;                                  // 网络是否出错
   private View mImageError;
-  private View mTvError;
   private View mProgressError;
   private View mErrorView;
   private AdapterWrapper mAdapterWrapper;
+  private boolean isTerribleNetEnvironment;                 // 标识没有网或者移动数据的网络状态
+  private AlertDialog mReadCacheDig;
 
-  @Inject public MainPresenter(MainContract.View view, MainContract.Model model) {
+  @Inject MainPresenter(MainContract.View view, MainContract.Model model) {
     mView = view;
     mModel = model;
   }
 
   @Override public void start() {
-    // 为了实例化toolbar上的TextView  只要TextUtils.ieEmpty(title) 为false
-    mView.setToolbarTitle("妹子");
     startSplashFragment();
-    mView.setUpRecyclerView();
+    // 为了实例化toolbar上的TextView  只要TextUtils.ieEmpty(title)返回false,所以随便set一个字符串"妹子"。
+    mView.setToolbarTitle("畅小朋友");
     mDialogFragment = new LoginDialogFragment();
-    RegisterRxBusObserverForChangeUser();
-    doNetGetData();
+    registerRx2BusObserverForChangingUser();
+    // 检测网络状态 wifi 就do nothing，没网或者移动数据提示用户
+    if (detectNetworkStateIsWIFIOrNot()) {
+      doNetGetData();
+    }
   }
 
-  //  设置头像和用户名
-  private void RegisterRxBusObserverForChangeUser() {
+  private void startSplashFragment() {
+    SplashFragment splashFragment = new SplashFragment();
+    FragmentSkipper.getInstance()
+        .init(mView.getViewContext())
+        .target(splashFragment)
+        .add(android.R.id.content);
+  }
+
+  private void removeSplashFragment() {
+    Rx2Bus.getDefault().post(Constant.FINISH_SPLASH);
+  }
+
+  /**
+   * 注册头像和用户名修改监听
+   */
+  private void registerRx2BusObserverForChangingUser() {
     Disposable busSubscribe = Rx2Bus.getDefault()
         .toFlowable(GitHubUserEntity.class)
         .subscribe(new Consumer<GitHubUserEntity>() {
@@ -118,8 +135,97 @@ public class MainPresenter extends BasePresenter
     register(busSubscribe);
   }
 
-  // 联网获取5天数据
-  public void doNetGetData() {
+  /**
+   * 检测网络状态
+   *
+   * @return true 当前是WIFI状态
+   */
+  private boolean detectNetworkStateIsWIFIOrNot() {
+    // 判断网络状态  wifi 无作为，没有网络和移动数据提示用户
+    if (!NetworkUtils.isWIFINetwork()) {
+      AlertDialog.Builder builder = new AlertDialog.Builder(mView.getViewContext());
+      builder.setNegativeButton("确定", this).setPositiveButton("开启Wi-Fi", this);
+      if (!NetworkUtils.isNetworkAvailable()) {
+        // 没有网络
+        builder.setMessage("当前没有网络连接哦").setCancelable(false);
+      } else if (NetworkUtils.isMobileNetwork()) {
+        // 移动网络
+        builder.setMessage("当前处于移动数据网络环境下，应用内图片较多，会稍显耗费流量哦");
+      }
+      AlertDialog alertDialog = builder.create();
+      alertDialog.show();
+      isTerribleNetEnvironment = true;
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * 初始化网络状态不是wifi的提示dialog
+   *
+   * @param dialog dialog
+   * @param which positive or negative bt
+   */
+  @Override public void onClick(DialogInterface dialog, int which) {
+    switch (which) {
+      case DialogInterface.BUTTON_POSITIVE:
+        // 开启wifi 跳转系统界面
+        mView.getViewContext()
+            .startActivity(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS));
+        break;
+      case DialogInterface.BUTTON_NEGATIVE:
+        // 判断是否有网（移动数据）,有就加载，没有移除splash
+        if (NetworkUtils.isMobileNetwork()) {
+          doNetGetData();
+        } else if (!NetworkUtils.isNetworkAvailable()) {
+          doNetIfCachedOrShowError();
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  /**
+   * 没有网络尝试从缓存中加载网络，如果没有缓存就 show error page
+   */
+  private void doNetIfCachedOrShowError() {
+    // 移除splash
+    removeSplashFragment();
+    try {
+      // 有网络缓存的话，会自动用缓存
+      doNetGetData();
+    } catch (Exception e) {
+      e.printStackTrace();
+      Logger.e("加载缓存失败：" + e);
+      mView.showLoadError();
+    }
+  }
+
+  /**
+   * 当移动数据或者无网络状态的时候，从系统wifi界面返回应用的时候
+   */
+  @Override public void restart() {
+    if (isTerribleNetEnvironment) {
+      if (NetworkUtils.isWIFINetwork()) {
+        // wifi
+        showRetriedNetworkState("WiFi");
+        doNetGetData();
+      } else if (NetworkUtils.isMobileNetwork()) {
+        // mobile
+        showRetriedNetworkState("移动数据");
+        doNetGetData();
+      } else if (!NetworkUtils.isNetworkAvailable()) {
+        // no net 移除splash
+        doNetIfCachedOrShowError();
+      }
+    }
+  }
+
+  /**
+   * 联网获取当天数据
+   */
+  private void doNetGetData() {
     mCollectEntities = new ArrayList<>(Constant.MEIZI_COUNT);
     Disposable netSubscribe =
         mModel.getTotalHistory()
@@ -168,16 +274,15 @@ public class MainPresenter extends BasePresenter
               @Override public void accept(List<GankDailyDataEntity> entities, Throwable throwable)
                   throws Exception {
 
-                if (isLoadingMore) {
-                  // 添加集合 notify
+                if (!isLoadingMore) {
+                  // 第一次加载时候发生异常，没有缓存情况下
+                  if (!handleFirstNetThrowable(throwable)) {
+                    processFirstSuccessData(entities);
+                  }
+                } else {
+                  // loadMore 添加数据到已有集合 notify
                   processLoadMoreData(entities, throwable);
                   isLoadingMore = false;
-                } else {
-                  // 第一次加载时候发生异常，没有缓存情况下
-                  if (handleFirstNetThrowable(throwable)) {
-                    return;
-                  }
-                  processFirstSuccessData(entities);
                 }
               }
             });
@@ -185,21 +290,61 @@ public class MainPresenter extends BasePresenter
     register(netSubscribe);
   }
 
-  @Override public void onLoadMore() {
-    isLoadingMore = true;
-    mSkipCount += Constant.MEIZI_COUNT;
-    mSkipPage += 1;
-    doNetGetData();
+  /**
+   * 添加日期
+   */
+  private void processAddDateField(List<GankDailyDataEntity> dailyDataEntities,
+      GankDailyTitleEntity titleEntity) {
+    for (int i = 0; i < dailyDataEntities.size(); i++) {
+      GankDailyDataEntity dataEntity = dailyDataEntities.get(i);
+      GankDailyTitleEntity.ResultsBean resultsBean = titleEntity.getResults().get(i);
+      dataEntity.setTitle(resultsBean.getTitle());
+      dataEntity.setDate(resultsBean.getPublishedAt());
+    }
   }
 
+  /**
+   * 当第一次加载网络时有问题，处理异常
+   */
+  private boolean handleFirstNetThrowable(Throwable throwable) {
+    if (throwable != null) {
+      // 这个EOFException 只是流读完了继续读才触发的，把它当成一个结束的标识就行。
+      // 这里调用联网触发使用缓存的时候会发生多种异常
+      if (!NetworkUtils.isNetworkAvailable()) {
+        // 没有网，尝试用缓存,只要是没有网路造成的异常就不予理会，不断尝试读取缓存，成功为止。
+        if (mReadCacheDig == null) {
+          mReadCacheDig = new AlertDialog.Builder(mView.getViewContext()).setCancelable(false)
+              .setMessage("当前没有网络连接，正在读取网络缓存...")
+              .create();
+        }
+        mReadCacheDig.show();
+        doNetGetData();
+        return true;
+      }
+      isError = true;
+      // find viewStub
+      mErrorView = mView.showLoadError();
+      mErrorView.setOnClickListener(MainPresenter.this);
+      ApiExceptionHandler.handleError(throwable);
+      return true;
+    }
+    //解析数据成功后
+    if (mReadCacheDig != null) {
+      mReadCacheDig.cancel();
+    }
+    return false;
+  }
+
+  /**
+   * 应用启动首次解析数据成功加载cards
+   */
   private void processFirstSuccessData(List<GankDailyDataEntity> entities) {
     mTotalEntities = entities;
     MainAdapter adapter = new MainAdapter(mTotalEntities);
     mAdapterWrapper = new AdapterWrapper(adapter);
     mAdapterWrapper.setLoadMoreView(R.layout.item_main_recyclerivew_load_more);
     mAdapterWrapper.setOnAdapterLoadMoreListener(this);
-    removeSplashFragment();
-    mView.setRecyclerViewAdapter(mAdapterWrapper);
+    mView.setUpRecyclerView(mAdapterWrapper);
     // 应用启动加载first item title
     setToolbarTitleAfterFirstLoaded();
     mView.initCardHelper();
@@ -207,8 +352,26 @@ public class MainPresenter extends BasePresenter
       hideErrorLayout();
     }
     isError = false;
+    // 联网成功无论成功失败与否先取消splash页
+    removeSplashFragment();
   }
 
+  /**
+   * 加载第一个card 对应的title
+   */
+  private void setToolbarTitleAfterFirstLoaded() {
+    // 第一次加载设置标题
+    GankDailyDataEntity entity = mTotalEntities.get(0);
+    // 获取制定日期title
+    String todayTitle = entity.getTitle();
+    // 获取日期
+    String todayDate = entity.getResults().get福利().get(0).getPublishedAt().split("T")[0];
+    mView.setToolbarTitle(todayDate + "  " + todayTitle);
+  }
+
+  /**
+   * 处理加载更多操作请求回来的数据
+   */
   private void processLoadMoreData(List<GankDailyDataEntity> entities, Throwable throwable) {
     // 有异常就直接return掉
     if (throwable != null) {
@@ -223,55 +386,20 @@ public class MainPresenter extends BasePresenter
     mView.stopLoadingMore();
   }
 
-  // 添加日期
-  private void processAddDateField(List<GankDailyDataEntity> dailyDataEntities,
-      GankDailyTitleEntity titleEntity) {
-    for (int i = 0; i < dailyDataEntities.size(); i++) {
-      GankDailyDataEntity dataEntity = dailyDataEntities.get(i);
-      GankDailyTitleEntity.ResultsBean resultsBean = titleEntity.getResults().get(i);
-      dataEntity.setTitle(resultsBean.getTitle());
-      dataEntity.setDate(resultsBean.getPublishedAt());
-    }
-  }
-
-  private void setToolbarTitleAfterFirstLoaded() {
-    // 第一次加载设置标题
-    GankDailyDataEntity entity = mTotalEntities.get(0);
-    // 获取制定日期title
-    String todayTitle = entity.getTitle();
-    // 获取日期
-    String todayDate = entity.getResults().get福利().get(0).getPublishedAt().split("T")[0];
-    mView.setToolbarTitle(todayDate + "  " + todayTitle);
-  }
-
-  // 当网络有问题处理异常
-  private boolean handleFirstNetThrowable(Throwable throwable) {
-    if (throwable != null) {
-      if (throwable instanceof EOFException) {
-        Logger.e(" EOFException");
-        return false;
-      }
-      if (isError) {
-        resetErrorLayout();
-      }
-      isError = true;
-      mErrorView = mView.showLoadError();
-      mErrorView.setOnClickListener(MainPresenter.this);
-      ApiExceptionHandler.handleError(throwable);
-      return true;
-    }
-    return false;
-  }
-
+  /**
+   * cards click listener
+   */
   @Override public void onItemClick(View v, int pos, MotionEvent event) {
     float x = event.getX();
     float y = event.getY();
     int height = v.getHeight();
     float finalRadius = Math.max(Math.abs(y), Math.abs(height - y));
-    //Logger.e("x：" + x + "y:" + y);
     startContentFragment(v, (int) x, (int) y, (int) finalRadius, pos);
   }
 
+  /**
+   * navigationView header image 和 error page click listener
+   */
   @Override public void onClick(View v) {
     switch (v.getId()) {
       case R.id.imgv_header_drawer_navigationview_main:
@@ -287,9 +415,15 @@ public class MainPresenter extends BasePresenter
         // 加载失败
         setErrorLayoutProgress(v);
         // 先判断网络状态
-        if (NetworkUtils.isAvailable(mView.getViewContext())) {
+        if (NetworkUtils.isNetworkAvailable()) {
           doNetGetData();
         } else {
+          // 没有网络尝试用缓存
+          try {
+            doNetGetData();
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
           mView.showToast(mView.getViewContext().getString(R.string.net_is_not_available));
           resetErrorLayout();
         }
@@ -299,7 +433,9 @@ public class MainPresenter extends BasePresenter
     }
   }
 
-  // toolbar menu item click
+  /**
+   * toolbar menu item click
+   */
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.about_menu_item_toolbar_main:
@@ -320,21 +456,6 @@ public class MainPresenter extends BasePresenter
         break;
     }
     return false;
-  }
-
-  private void startSplashFragment() {
-    mSplashFragment = new SplashFragment();
-    FragmentSkipper.getInstance()
-        .init(((FragmentActivity) mView.getViewContext()))
-        .target(mSplashFragment)
-        .add(android.R.id.content);
-  }
-
-  private void removeSplashFragment() {
-    ((FragmentActivity) mView.getViewContext()).getSupportFragmentManager()
-        .beginTransaction()
-        .remove(mSplashFragment)
-        .commitAllowingStateLoss();
   }
 
   private void startContentFragment(View v, int x, int y, int finalRadius, final int pos) {
@@ -359,7 +480,11 @@ public class MainPresenter extends BasePresenter
         });
   }
 
-  // navigationView item click listener
+  /**
+   * navigationView item click listener
+   *
+   * @param item navigationView item
+   */
   @Override public boolean onNavigationItemSelected(@NonNull MenuItem item) {
     switch (item.getItemId()) {
       case R.id.Android_category_menu_navigationview_main:
@@ -402,7 +527,7 @@ public class MainPresenter extends BasePresenter
         //clear cache
         String cacheSize = CleanCatcheUtils.getCacheSize(mView.getViewContext());
         String message = String.format("发现 %s 缓存(主要是图片)，是否清理？", cacheSize);
-        if (cacheSize.contains("0.00")) {
+        if (cacheSize.contains(mView.getViewContext().getString(R.string.no_cache))) {
           message = "尚无缓存";
         }
         showCacheDig(message);
@@ -443,7 +568,9 @@ public class MainPresenter extends BasePresenter
         .add(android.R.id.content, true);
   }
 
-  //异步清理缓存
+  /**
+   * 异步清理缓存
+   */
   private void cleanCacheSync() {
     Observable.just(CleanCatcheUtils.clear(mView.getViewContext()))
         .compose(RxUtils.<Boolean>switchObservableSchedulers())
@@ -481,12 +608,14 @@ public class MainPresenter extends BasePresenter
         .show();
   }
 
-  // 点击errorLayout 变progress
+  /**
+   * 点击errorLayout 变progress
+   *
+   * @param v targetView
+   */
   private void setErrorLayoutProgress(View v) {
     mImageError = v.findViewById(R.id.imgv_load_error_main_activity);
     mImageError.setVisibility(View.GONE);
-    mTvError = v.findViewById(R.id.tv_load_error_main_activity);
-    mTvError.setVisibility(View.GONE);
     mProgressError = v.findViewById(R.id.progressbar_load_error_main_activity);
     mProgressError.setVisibility(View.VISIBLE);
   }
@@ -498,7 +627,6 @@ public class MainPresenter extends BasePresenter
 
   private void resetErrorLayout() {
     mImageError.setVisibility(View.VISIBLE);
-    mTvError.setVisibility(View.VISIBLE);
     mProgressError.setVisibility(View.GONE);
   }
 
@@ -507,10 +635,36 @@ public class MainPresenter extends BasePresenter
         mDialogFragment.getClass().getSimpleName());
   }
 
-  // 处理MainActivity 的back 逻辑
+  /**
+   * 重新获取网络后,通知获取的网络状态
+   */
+  private void showRetriedNetworkState(String state) {
+    Toast.makeText(mView.getViewContext(), "当前是" + state + "连接", Toast.LENGTH_SHORT).show();
+  }
+
+  public List<GankDailyDataEntity> getTotalEntities() {
+    return mTotalEntities;
+  }
+
+  @Override public void onDestroy() {
+    // unRegister sth
+    unSubscribe();
+  }
+
+  @Override public MainContract.View getView() {
+    return mView;
+  }
+
+  /**
+   * 处理MainActivity 的back 逻辑
+   *
+   * @return weather custom event
+   */
   @Override public boolean onBackPress() {
     Boolean interceptBackEvent = handleFragmentBackPress();
-    if (interceptBackEvent != null) return interceptBackEvent;
+    if (interceptBackEvent != null) {
+      return interceptBackEvent;
+    }
     // 安全退出
     return safeQuitApp();
   }
@@ -532,10 +686,14 @@ public class MainPresenter extends BasePresenter
     return null;
   }
 
-  // 双击推出应用
+  /**
+   * 双击推出应用
+   *
+   * @return 是否满足推出条件
+   */
   private boolean safeQuitApp() {
     long currentClickTime = System.currentTimeMillis();
-    if (Math.abs(currentClickTime - mLastClickTime) >= 2000) {
+    if (Math.abs(currentClickTime - mLastClickTime) >= Constant.SAFT_QUIT_INTERVAL) {
       mLastClickTime = currentClickTime;
       mView.showToast(mView.getViewContext().getString(R.string.double_click_quit_app));
       return true;
@@ -543,16 +701,10 @@ public class MainPresenter extends BasePresenter
     return false;
   }
 
-  @Override public void onDestroy() {
-    // unRegister sth
-    unSubscribe();
-  }
-
-  @Override public MainContract.View getView() {
-    return mView;
-  }
-
-  public List<GankDailyDataEntity> getTotalEntities() {
-    return mTotalEntities;
+  @Override public void onLoadMore() {
+    isLoadingMore = true;
+    mSkipCount += Constant.MEIZI_COUNT;
+    mSkipPage += 1;
+    doNetGetData();
   }
 }
