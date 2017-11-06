@@ -13,6 +13,10 @@ MVP+Dagger2.android+Retrofit+RxJava2+Glide+Realm。
 
 ### [APK下载](apk/app-debug.apk)
 
+[pgy下载页](https://www.pgyer.com/bgWq)
+
+<img src="art/pic_down_load.png" width="200">
+
 
 ### 功能
 1. GitHub 账户即可登录，无需密码，用户创建本地账户收藏干货用。
